@@ -14,11 +14,32 @@
 
 <script>
 export default {
-
+	data(){
+		return{
+			fix:false,
+		}
+	},
+	methods:{
+		
+	},
+	mounted(){
+		document.addEventListener('scroll', function(){
+			var menu = document.getElementById('menu');
+			if(window.scrollY>150) {menu.classList.add('fix-menu');}
+			else{menu.classList.remove('fix-menu');}
+			
+		});
+	}
 }
 </script>
 
 <style scope>
+.fix-menu{
+	position:fixed;
+	top:0;
+	overflow: hidden;
+	z-index:99;
+}
 #menu{
 	width:100%;
 	background:#f7f8fa;
