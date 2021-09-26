@@ -17,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+// api loaivanban
+Route::get('/getListLoai','loaiVanBanController@index');
+Route::get('/getListLoai/{id}','loaiVanBanController@edit');
