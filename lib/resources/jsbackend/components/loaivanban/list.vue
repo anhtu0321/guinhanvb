@@ -40,9 +40,6 @@ export default {
     props:[
         'listData'
     ],
-    computed:{
-        
-    },
     methods:{
         loadDataById(id){
             this.idEdit = id;

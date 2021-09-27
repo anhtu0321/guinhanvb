@@ -36,35 +36,25 @@ export default {
             idEdit:'',
         }
     },
+    props:[
+        'listData'
+    ],
     computed:{
-        currentPage(){
-            return this.$store.getters.getPage;
-        },
-        listData(){
-            return this.$store.getters.getListChucNang;
-        },
-		listPermissionOfUser(){
-			return this.$store.getters.getlistPermissionOfUser;
-        }
+        listPermissionOfUser(){
+			return this.$store.state.listPermissionOfUser;
+		},
     },
     methods:{
-        loadDataById(){
-            this.idEdit = this.$route.params.id;
-            axios.get(`/px03/public/editChucNang/${this.$route.params.id}`)
-            .then(response=>{
-                this.$emit('dataById', response);
-            })
+        loadDataById(id){
+            this.idEdit = id;
+            this.$emit('loadDataById', id);
         },
-        deleteData(id){
-            if(confirm('ban muon xoa that a ?') == true){
-                axios.get(`/px03/public/deleteChucNang/${id}`)
-                .then(reponse=>{
-                    this.$store.dispatch('acListChucNang',this.currentPage);
-                    if(this.$router.history.current.path !=='/chucnang'){
-                        this.$router.push('/chucnang');
-                    }
-                })
-            }
+        deleteById(id){
+            axios.get('/guinhanvb/deleteLoaiVanBan/'+id)
+            .then(res=>{
+                this.$emit('deleted');
+                alert('Xóa Thành công !');
+            })
         },
 		ktquyen(key_code){
 			for(var i in this.listPermissionOfUser){
@@ -77,7 +67,8 @@ export default {
     },
     mounted(){
         this.idEdit = this.$route.params.id;
-    }
+    },
+    
 }
 </script>
 

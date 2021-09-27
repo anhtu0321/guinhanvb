@@ -20,3 +20,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // api loaivanban
 Route::get('/getListLoai','loaiVanBanController@index');
 Route::get('/getListLoai/{id}','loaiVanBanController@edit');
+// Danh sach chuc nang cha
+Route::get('/listChucNangCha','PermissionController@listCha');
+// api list Chuc Nang
+Route::get('/getListChucNang','PermissionController@index');
+Route::get('/getListChucNang/{id}','PermissionController@edit');

@@ -47,7 +47,6 @@
 							</div>
 							<div class="form-group col-md-12 text-right">
 								<button type="submit" class="btn btn-primary btn-sm" v-if="ktquyen('chucnang_them')">Thêm chức năng</button>
-								<button type="submit" class="btn btn-warning btn-sm" @click.prevent="reloadData">Tải lại dữ liệu</button>
 							</div>
 
 					</form>
@@ -59,7 +58,7 @@
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-10 list">
-					<list></list>
+					<list :listData='listData'></list>
 				</div>
 			</div>
 		</div>
@@ -85,7 +84,7 @@
 // import các components
 import contentHeader from '../content_header.vue'
 import list from './list.vue'
-import paginate from '../page.vue'
+import paginate from './page.vue'
 export default {
 	data(){
 		return{
@@ -96,56 +95,49 @@ export default {
 			key_code:'',
 			parent_id:0,
 			error:'',
+			listData:'',
 			chuc_nang_cha:'',
 		}
 	},
 	computed:{
-		currentPage(){
-            return this.$store.getters.getPage;
-        },
-        listData(){
-            return this.$store.getters.getListChucNang;
-		},
 		listPermissionOfUser(){
-			return this.$store.getters.getlistPermissionOfUser;
-        }
+			return this.$store.state.listPermissionOfUser;
+		},
+		page(){
+			return this.$store.state.pageChucNang;
+		}
     },
 	methods:{
 		add(){
-			let data = new FormData;
-			data.append('name', this.name);
-			data.append('display_name', this.display_name);
-			data.append('key_code', this.key_code);
-			data.append('parent_id', this.parent_id);
-			axios.post('/px03/public/addChucNang', data)
-			.then(response=>{
-				this.name = '';
-				this.display_name = '';
-				this.key_code = '';
-				this.error = '';
-				this.list();
-				this.listChucNangCha();
-			})
-			.catch(error=>{
-				this.error = error.response.data.errors;
-			});
-		},
-		list(){
-			this.$store.dispatch('acListChucNang',this.currentPage);
+			// let data = new FormData;
+			// data.append('name', this.name);
+			// data.append('display_name', this.display_name);
+			// data.append('key_code', this.key_code);
+			// data.append('parent_id', this.parent_id);
+			// axios.post('/px03/public/addChucNang', data)
+			// .then(response=>{
+			// 	this.name = '';
+			// 	this.display_name = '';
+			// 	this.key_code = '';
+			// 	this.error = '';
+			// 	this.list();
+			// 	this.listChucNangCha();
+			// })
+			// .catch(error=>{
+			// 	this.error = error.response.data.errors;
+			// });
 		},
 		listChucNangCha(){
-			axios.get('/px03/public/listChucNangCha')
+			axios.get('/guinhanvb/api/listChucNangCha')
 			.then(response=>{
 				this.chuc_nang_cha = response.data;
 			})
 		},
 		loadData(){
-			this.list();
-		},
-		reloadData(){
-			this.$store.dispatch('acGetPage',1);
-			this.list();
-			this.listChucNangCha();
+			axios.get('/guinhanvb/api/getListChucNang?page='+this.page)
+            .then(response=>{
+				this.listData = response.data;
+            })
 		},
 		ktquyen(key_code){
 			for(var i in this.listPermissionOfUser){
@@ -157,15 +149,14 @@ export default {
 		}
 	},
 	components:{contentHeader, list, paginate},
-	mounted(){
-		this.list();
+	created(){
 		this.listChucNangCha();
-		
+		this.loadData();
 	}
 }
 </script>
 
-<style>
+<style scoped>
 .main{
 	margin:0 auto;
 	box-shadow: -5px -5px 10px #ffffffe3, 5px 5px 8px rgba(94, 104, 121, 0.288);
