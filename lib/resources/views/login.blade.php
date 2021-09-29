@@ -35,7 +35,7 @@
 	@csrf
 	<div class="hand"></div>
 	<div class="hand rgt"></div>
-	<h1>Phần mềm Quản lý văn bản</h1>
+	<h1>Phần mềm Gửi nhận văn bản</h1>
 	<div class="form-group">
 		<input required="required" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username"/>
 		<label class="form-label">Tài khoản</label>

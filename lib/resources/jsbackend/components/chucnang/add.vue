@@ -58,7 +58,7 @@
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-10 list">
-					<list :listData='listData'></list>
+					<list :listData='listData' @deleted="loadData()"></list>
 				</div>
 			</div>
 		</div>
@@ -109,23 +109,23 @@ export default {
     },
 	methods:{
 		add(){
-			// let data = new FormData;
-			// data.append('name', this.name);
-			// data.append('display_name', this.display_name);
-			// data.append('key_code', this.key_code);
-			// data.append('parent_id', this.parent_id);
-			// axios.post('/px03/public/addChucNang', data)
-			// .then(response=>{
-			// 	this.name = '';
-			// 	this.display_name = '';
-			// 	this.key_code = '';
-			// 	this.error = '';
-			// 	this.list();
-			// 	this.listChucNangCha();
-			// })
-			// .catch(error=>{
-			// 	this.error = error.response.data.errors;
-			// });
+			let data = new FormData;
+			data.append('name', this.name);
+			data.append('display_name', this.display_name);
+			data.append('key_code', this.key_code);
+			data.append('parent_id', this.parent_id);
+			axios.post('/guinhanvb/addChucNang', data)
+			.then(response=>{
+				this.name = '';
+				this.display_name = '';
+				this.key_code = '';
+				this.error = '';
+				this.listChucNangCha();
+				this.loadData();
+			})
+			.catch(error=>{
+				this.error = error.response.data.errors;
+			});
 		},
 		listChucNangCha(){
 			axios.get('/guinhanvb/api/listChucNangCha')

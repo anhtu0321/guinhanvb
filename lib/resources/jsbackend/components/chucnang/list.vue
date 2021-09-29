@@ -20,7 +20,7 @@
                 <td v-if="list.chucnangcha != null">{{list.chucnangcha.name}}</td>
                 <td v-else></td>
                 <td>
-                    <router-link class="btn btn-primary btn-sm" :to="`/chucnang/edit/${list.id}`" @click.native="loadDataById()" v-if="ktquyen('chucnang_sua')">Sửa</router-link>
+                    <router-link class="btn btn-primary btn-sm" :to="`/chucnang/edit/${list.id}`" @click.native="loadDataById(list.id)" v-if="ktquyen('chucnang_sua')">Sửa</router-link>
                     <button class="btn btn-danger btn-sm" @click.prevent="deleteData(list.id)" v-if="ktquyen('chucnang_xoa')">Xóa</button>
                 </td>
             </tr>
@@ -49,8 +49,8 @@ export default {
             this.idEdit = id;
             this.$emit('loadDataById', id);
         },
-        deleteById(id){
-            axios.get('/guinhanvb/deleteLoaiVanBan/'+id)
+        deleteData(id){
+            axios.get('/guinhanvb/deleteChucNang/'+id)
             .then(res=>{
                 this.$emit('deleted');
                 alert('Xóa Thành công !');
@@ -68,7 +68,6 @@ export default {
     mounted(){
         this.idEdit = this.$route.params.id;
     },
-    
 }
 </script>
 

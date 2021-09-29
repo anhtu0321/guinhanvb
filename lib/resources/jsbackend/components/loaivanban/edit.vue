@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if="ktquyen('loaivanban_sua')">
 		<content-header :tieude="tieude" :link="link"></content-header>
         <section class="content">
     		<div class="container-fluid">
@@ -28,7 +28,7 @@
 							</select>
 						</div>
 						<div class="form-group col-md-12 text-right">
-							<button type="submit" class="btn btn-success btn-sm">Sửa loại văn bản</button>
+							<button type="submit" class="btn btn-success btn-sm" v-if="ktquyen('loaivanban_sua')">Sửa loại văn bản</button>
 							<router-link to="/loaivanban" class="btn btn-warning btn-sm">Quay lại</router-link>
 						</div>
 					</form>
@@ -43,7 +43,15 @@
             </div>
         </div>
 	</div>
-	
+	<div v-else>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="mt-2 mr-2 alert" style="font-size:2rem; color:red">
+					Bạn không có quyền xem mục này !
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -64,6 +72,9 @@ export default {
 		}
 	},
 	computed:{
+		listPermissionOfUser(){
+			return this.$store.state.listPermissionOfUser;
+		},
 		page(){
 			return this.$store.state.pageList;
 		}
@@ -96,16 +107,19 @@ export default {
 				this.thu_tu = response.data.thu_tu;
 				this.trang_thai = response.data.trang_thai;
 			})
+		},
+		ktquyen(key_code){
+			for(var i in this.listPermissionOfUser){
+				if(this.listPermissionOfUser[i].key_code == key_code){
+					return true;
+				}
+			}
+			return false;
 		}
 	},
 	created(){
 		this.loadData(this.page);
-		axios.get('/guinhanvb/api/getListLoai/'+this.$route.params.id)
-		.then(response=>{
-			this.ten_loai = response.data.ten_loai;
-			this.thu_tu = response.data.thu_tu;
-			this.trang_thai = response.data.trang_thai;
-		})
+		this.loadDataById(this.$route.params.id);
 	},
 	components:{contentHeader, list, paginate},
 }

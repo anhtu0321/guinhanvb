@@ -51,7 +51,6 @@
 							<!-- end row permission -->
 							<div class="form-group col-md-12 text-right">
 								<button type="submit" class="btn btn-primary btn-sm" v-if="ktquyen('phanquyen_them')">Thêm Phân quyền</button>
-								<button type="submit" class="btn btn-warning btn-sm" @click.prevent="reloadData">Tải lại dữ liệu</button>
 							</div>
 
 					</form>
@@ -63,7 +62,7 @@
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-8 list">
-					<list></list>
+					<list :listData='listData' @deleted="loadData()"></list>
 				</div>
 			</div>
 		</div>
@@ -89,7 +88,7 @@
 // import các components
 import contentHeader from '../content_header.vue'
 import list from './list.vue'
-import paginate from '../page.vue'
+import paginate from './page.vue'
 
 export default {
 	data(){
@@ -102,15 +101,16 @@ export default {
 			permissions:'',
 			check_all:false,
 			mangchucnang:[],
+			listData:'',
 		}
 	},
 	computed:{
-		currentPage(){
-            return this.$store.getters.getPage;
-        },
-        listData(){ //để lấy số trang (last_page)
-            return this.$store.getters.getListPhanQuyen;
-		},	
+		page(){
+			return this.$store.state.pagePhanQuyen;
+		},
+		listPermissionOfUser(){
+			return this.$store.state.listPermissionOfUser;
+		},
 		perChild(){
 			var arr = [];
 			for( var i in this.permissions){
@@ -120,9 +120,6 @@ export default {
 			}
 			return arr;
 		},
-		listPermissionOfUser(){
-			return this.$store.getters.getlistPermissionOfUser;
-        }
     },
 	methods:{
 		add(){ //thêm dữ liệu vào database
@@ -132,33 +129,28 @@ export default {
 			for(var i in this.mangchucnang){
 				data.append('mangchucnang[]', this.mangchucnang[i]);
 			}
-			axios.post('/px03/public/addPhanQuyen', data)
+			axios.post('/guinhanvb/addPhanQuyen', data)
 			.then(response=>{
 				this.name = '';
 				this.display_name = '';
 				this.mangchucnang=[];
 				this.error = '';
-				this.list();
+				this.loadData();
 				this.$store.dispatch('aclistPermissionOfUser');
 			})
 			.catch(error=>{
 				this.error = error.response.data.errors;
 			});
-			// console.log(this.mangchucnang);
-		},
-		list(){ //sử dụng để lấy số trang cho list
-			this.$store.dispatch('acListPhanQuyen',this.currentPage);
 		},
 		
 		loadData(){ //khi chọn trang
-			this.list();
-		},
-		reloadData(){ //khi ấn nút tải lại dữ liệu
-			this.$store.dispatch('acGetPage',1);
-			this.list();
+			axios.get('/guinhanvb/api/listPhanQuyen?page='+this.page)
+			.then(response=>{
+				this.listData = response.data;	
+			})
 		},
 		loadPermission(){ //tải dữ liệu permission
-			axios.get('/px03/public/listChucNangCha')
+			axios.get('/guinhanvb/api/listChucNangCha')
 			.then(response=>{
 				this.permissions = response.data;
 			})
@@ -194,9 +186,8 @@ export default {
 	},
 	components:{contentHeader, list, paginate},
 	mounted(){
-		this.list();
+		this.loadData();
 		this.loadPermission();
-		this.$store.dispatch('aclistPermissionOfUser');
 	}
 }
 </script>

@@ -15,7 +15,7 @@
                 <td>{{list.name}}</td>
                 <td>{{list.display_name}}</td>
                 <td>
-                    <router-link class="btn btn-primary btn-sm" :to="`/phanquyen/edit/${list.id}`" @click.native="loadDataById()" v-if="ktquyen('phanquyen_sua')">Sửa</router-link>
+                    <router-link class="btn btn-primary btn-sm" :to="`/phanquyen/edit/${list.id}`" @click.native="loadDataById(list.id)" v-if="ktquyen('phanquyen_sua')">Sửa</router-link>
                     <button class="btn btn-danger btn-sm" @click.prevent="deleteData(list.id)" v-if="ktquyen('phanquyen_xoa')">Xóa</button>
                 </td>
             </tr>
@@ -31,34 +31,24 @@ export default {
             idEdit:'',
         }
     },
+    props:['listData'],
     computed:{
-        currentPage(){
-            return this.$store.getters.getPage;
-        },
-        listData(){
-            return this.$store.getters.getListPhanQuyen;
-        },
 		listPermissionOfUser(){
-			return this.$store.getters.getlistPermissionOfUser;
+			return this.$store.state.listPermissionOfUser;
         }
     },
     methods:{
-        loadDataById(){
+        loadDataById(id){
             this.idEdit = this.$route.params.id;
-            axios.get(`/px03/public/editPhanQuyen/${this.$route.params.id}`)
-            .then(response=>{
-                this.$emit('dataById', response);
-            })
+            this.$emit('loadDataById', id);
         },
         deleteData(id){
             if(confirm('ban muon xoa that a ?') == true){
-                axios.get(`/px03/public/deletePhanQuyen/${id}`)
-                .then(reponse=>{
-                    this.$store.dispatch('acListPhanQuyen',this.currentPage);
-                    if(this.$router.history.current.path !=='/phanquyen'){
-                        this.$router.push('/phanquyen');
-                    }
-                })
+                axios.get(`/guinhanvb/deletePhanQuyen/${id}`)
+                .then(res=>{
+                this.$emit('deleted');
+                alert('Xóa Thành công !');
+            })
             }
         },
 		ktquyen(key_code){

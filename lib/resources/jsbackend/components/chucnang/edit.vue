@@ -55,7 +55,7 @@
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-10 list">
-					<list @dataById="updateById"></list>
+					<list @loadDataById='loadDataById' :listData='listData' @deleted="loadData()"></list>
 				</div>
 			</div>
 		</div>
@@ -81,7 +81,7 @@
 // import các components
 import contentHeader from '../content_header.vue'
 import list from './list.vue'
-import paginate from '../page.vue'
+import paginate from './page.vue'
 export default {
 	data(){
 		return{
@@ -93,18 +93,16 @@ export default {
 			parent_id:'',
 			error:'',
 			chuc_nang_cha:'',
+			listData:'',
 		}
 	},
 	computed:{
-		currentPage(){
-            return this.$store.getters.getPage;
-        },
-        listData(){
-            return this.$store.getters.getListChucNang;
-        },
 		listPermissionOfUser(){
-			return this.$store.getters.getlistPermissionOfUser;
-        }
+			return this.$store.state.listPermissionOfUser;
+		},
+		page(){
+			return this.$store.state.pageChucNang;
+		}
 	},
 	methods:{
 		edit(){
@@ -113,32 +111,37 @@ export default {
 			data.append('display_name', this.display_name);
 			data.append('key_code', this.key_code);
 			data.append('parent_id', this.parent_id);
-			axios.post(`/px03/public/updateChucNang/${this.$route.params.id}`, data)
+			axios.post(`/guinhanvb/updateChucNang/${this.$route.params.id}`, data)
 			.then(response=>{
-				this.list();
+				this.loadData();
 				this.listChucNangCha();
+				alert('Update thành công !');
 			})
 			.catch(error=>{
 				this.error = error.response.data.errors;
 			});
 		},
-		list(){
-			this.$store.dispatch('acListChucNang',this.currentPage);
-		},
 		listChucNangCha(){
-			axios.get('/px03/public/listChucNangCha')
+			axios.get('/guinhanvb/api/listChucNangCha')
 			.then(response=>{
 				this.chuc_nang_cha = response.data;
 			})
 		},
-		updateById(data){
-			this.name = data.data[0].name;
-			this.display_name = data.data[0].display_name;
-			this.key_code = data.data[0].key_code;
-			this.parent_id = data.data[0].parent_id;
-		},
 		loadData(){
-			this.list();
+			axios.get('/guinhanvb/api/getListChucNang?page='+this.page)
+			.then(response=>{
+				this.listData = response.data;
+			})
+		},
+		loadDataById(id){
+			axios.get('/guinhanvb/api/getListChucNang/'+id)
+			.then(response=>{
+				this.name = response.data[0].name;
+				this.display_name = response.data[0].display_name;
+				this.key_code = response.data[0].key_code;
+				this.parent_id = response.data[0].parent_id;
+			})
+			//  = data.data[0].name;
 		},
 		ktquyen(key_code){
 			for(var i in this.listPermissionOfUser){
@@ -151,15 +154,9 @@ export default {
 	},
 	components:{contentHeader, list, paginate},
 	mounted(){
-		// this.list();
-		axios.get(`/px03/public/editChucNang/${this.$route.params.id}`)
-        .then(response=>{
-            this.name = response.data[0].name;
-			this.display_name = response.data[0].display_name;
-			this.key_code = response.data[0].key_code;
-			this.parent_id = response.data[0].parent_id;
-		});
+		this.loadData();
 		this.listChucNangCha();
+		this.loadDataById(this.$route.params.id);
 	},
 }
 </script>

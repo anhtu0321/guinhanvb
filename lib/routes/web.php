@@ -22,15 +22,12 @@ Route::post('/updateLoaiVanBan/{id}','loaiVanBanController@update');
 Route::get('/deleteLoaiVanBan/{id}','loaiVanBanController@destroy');
 // Chức năng
 Route::post('/addChucNang','PermissionController@store')->middleware('can:chucnang_them');
-Route::get('/listChucNang','PermissionController@index')->middleware('can:chucnang_xem');
-Route::get('/editChucNang/{id}','PermissionController@edit')->middleware('can:chucnang_sua');
 Route::post('/updateChucNang/{id}','PermissionController@update')->middleware('can:chucnang_sua');
 Route::get('/deleteChucNang/{id}','PermissionController@destroy')->middleware('can:chucnang_xoa');
 
 // phân quyền
 Route::post('/addPhanQuyen','RoleController@store')->middleware('can:phanquyen_them');
-Route::get('/listPhanQuyen','RoleController@index')->middleware('can:phanquyen_xem');
-Route::get('/editPhanQuyen/{id}','RoleController@edit')->middleware('can:phanquyen_sua');
+
 Route::post('/updatePhanQuyen/{id}','RoleController@update')->middleware('can:phanquyen_sua');
 Route::get('/deletePhanQuyen/{id}','RoleController@destroy')->middleware('can:phanquyen_xoa');
 // Tài khoản

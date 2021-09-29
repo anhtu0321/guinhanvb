@@ -25,3 +25,8 @@ Route::get('/listChucNangCha','PermissionController@listCha');
 // api list Chuc Nang
 Route::get('/getListChucNang','PermissionController@index');
 Route::get('/getListChucNang/{id}','PermissionController@edit');
+// api list Phân quyền
+Route::get('/listPhanQuyen','RoleController@index');
+Route::get('/editPhanQuyen/{id}','RoleController@edit');
+// list chuc nang cha phuc vu quản lý phân quyền
+Route::get('/listChucNangCha','PermissionController@listCha');
