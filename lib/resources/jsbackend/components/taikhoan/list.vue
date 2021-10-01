@@ -19,7 +19,7 @@
                     <span v-for="role in list.roles" :key="role.id">{{ role.name }}, </span>
                 </td>
                 <td>
-                    <router-link class="btn btn-primary btn-sm" :to="`/taikhoan/edit/${list.id}`" @click.native="loadDataById()" v-if="ktquyen('taikhoan_sua')">Sửa</router-link>
+                    <router-link class="btn btn-primary btn-sm" :to="`/taikhoan/edit/${list.id}`" @click.native="loadDataById(list.id)" v-if="ktquyen('taikhoan_sua')">Sửa</router-link>
                     <button class="btn btn-danger btn-sm" @click.prevent="deleteData(list.id)" v-if="ktquyen('taikhoan_xoa')">Xóa</button>
                 </td>
             </tr>
@@ -35,24 +35,16 @@ export default {
             idEdit:'',
         }
     },
+    props:['listData'],
     computed:{
-        currentPage(){
-            return this.$store.getters.getPage;
-        },
-        listData(){
-            return this.$store.getters.getListTaiKhoan;
-        },
 		listPermissionOfUser(){
-			return this.$store.getters.getlistPermissionOfUser;
+			return this.$store.state.listPermissionOfUser;
         }
     },
     methods:{
-        loadDataById(){
+        loadDataById(id){
             this.idEdit = this.$route.params.id;
-            axios.get(`/px03/public/editTaiKhoan/${this.$route.params.id}`)
-            .then(response=>{
-                this.$emit('dataById', response);
-            })
+            this.$emit('loadDataById', id);
         },
         deleteData(id){
             if(confirm('ban muon xoa that a ?') == true){

@@ -49,7 +49,7 @@
 		<div class="container-fluid">
         	<div class="row">
             	<div class="col-md-8 list">
-					<list @dataById="updateById"></list>
+					<list :listData="listData" @loadDataById="loadDataById"></list>
 				</div>
 			</div>
 		</div>
@@ -88,20 +88,15 @@ export default {
 			password:'',
 			error:'',
 			roles:[],
+			listRoles:'',
 		}
 	},
 	computed:{
-		currentPage(){
-            return this.$store.getters.getPage;
-        },
-        listData(){
-            return this.$store.getters.getListTaiKhoan;
-		},
-		listRoles(){
-            return this.$store.getters.getListPhanQuyen;
+		page(){
+            return this.$store.state.pageTaiKhoan;
         },
 		listPermissionOfUser(){
-			return this.$store.getters.getlistPermissionOfUser;
+			return this.$store.state.listPermissionOfUser;
         }
 	},
 	methods:{
@@ -113,9 +108,9 @@ export default {
 			for(var i in this.roles){
 				data.append('roles[]', this.roles[i]);
 			}
-			axios.post(`/px03/public/updateTaiKhoan/${this.$route.params.id}`, data)
+			axios.post(`/guinhanvb/updateTaiKhoan/${this.$route.params.id}`, data)
 			.then(response=>{
-				this.list();
+				this.loadData();
 				this.$store.dispatch('aclistPermissionOfUser');
 				alert('Đã cập nhật !');
 			})
@@ -123,16 +118,25 @@ export default {
 				this.error = error.response.data.errors;
 			});
 		},
-		list(){
-			this.$store.dispatch('acListTaiKhoan',this.currentPage);
-		},
-		updateById(data){
-			this.fullname = data.data[0].fullname;
-			this.username = data.data[0].username;
-			this.roles = data.data[0].roles;
+		loadDataById(id){
+			axios.get(`/guinhanvb/api/editTaiKhoan/${id}`)
+            .then(response=>{
+				this.fullname = response.data[0].fullname;
+				this.username = response.data[0].username;
+				this.roles = response.data[0].roles;
+            })
 		},
 		loadData(){
-			this.list();
+			axios.get('/guinhanvb/api/listTaiKhoan?page='+this.page)
+			.then(res=>{
+				this.listData = res.data;
+			})
+		},
+		loadListRole(){
+			axios.get('/guinhanvb/api/listPhanQuyen')
+			.then(res=>{
+				this.listRoles = res.data;
+			})
 		},
 		ktquyen(key_code){
 			for(var i in this.listPermissionOfUser){
@@ -144,15 +148,10 @@ export default {
 		}
 	},
 	components:{contentHeader, list, paginate, vSelect},
-	mounted(){
-		// this.list();
-		axios.get(`/px03/public/editTaiKhoan/${this.$route.params.id}`)
-        .then(data=>{
-            this.fullname = data.data[0].fullname;
-			this.username = data.data[0].username;
-			this.roles = data.data[0].roles.map(role=>role.id);
-		});
-		this.$store.dispatch('acListPhanQuyen',1);
+	created(){
+		this.loadData();
+		this.loadDataById(this.$route.params.id);
+		this.loadListRole();
 		this.$store.dispatch('aclistPermissionOfUser');
 	},
 }

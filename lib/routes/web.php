@@ -20,6 +20,7 @@ Route::group(['prefix'=>'admin'],function(){
 Route::post('/addLoaiVanBan','loaiVanBanController@store');
 Route::post('/updateLoaiVanBan/{id}','loaiVanBanController@update');
 Route::get('/deleteLoaiVanBan/{id}','loaiVanBanController@destroy');
+
 // Chức năng
 Route::post('/addChucNang','PermissionController@store')->middleware('can:chucnang_them');
 Route::post('/updateChucNang/{id}','PermissionController@update')->middleware('can:chucnang_sua');
@@ -27,12 +28,10 @@ Route::get('/deleteChucNang/{id}','PermissionController@destroy')->middleware('c
 
 // phân quyền
 Route::post('/addPhanQuyen','RoleController@store')->middleware('can:phanquyen_them');
-
 Route::post('/updatePhanQuyen/{id}','RoleController@update')->middleware('can:phanquyen_sua');
 Route::get('/deletePhanQuyen/{id}','RoleController@destroy')->middleware('can:phanquyen_xoa');
+
 // Tài khoản
 Route::post('/addTaiKhoan','UserController@store')->middleware('can:taikhoan_them');
-Route::get('/listTaiKhoan','UserController@index')->middleware('can:taikhoan_xem');
-Route::get('/editTaiKhoan/{id}','UserController@edit')->middleware('can:taikhoan_sua');
 Route::post('/updateTaiKhoan/{id}','UserController@update')->middleware('can:taikhoan_sua');
 Route::get('/deleteTaiKhoan/{id}','UserController@destroy')->middleware('can:taikhoan_xoa');
