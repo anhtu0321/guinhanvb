@@ -9,6 +9,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // api loaivanban
 Route::get('/getListLoai','loaiVanBanController@index');
 Route::get('/getListLoai/{id}','loaiVanBanController@edit');
+// api DonVi
+Route::get('/getDonVi','DonViController@index');
+Route::get('/getDonVi/{id}','DonViController@edit');
 // Danh sach chuc nang cha
 Route::get('/listChucNangCha','PermissionController@listCha');
 // api list Chuc Nang

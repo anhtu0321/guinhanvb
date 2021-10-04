@@ -52,7 +52,7 @@
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-8 list">
-					<list :listData='listData'></list>
+					<list :listData='listData' @deleted="loadData()"></list>
 				</div>
 			</div>
 		</div>

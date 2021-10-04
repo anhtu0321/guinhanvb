@@ -16,10 +16,16 @@ Route::group(['prefix'=>'admin'],function(){
     Route::get('/logout','loginController@getLogout')->name('logout');
     Route::get('/home', 'HomeController@index')->name('home');
 });
+
 // loaivanban
 Route::post('/addLoaiVanBan','loaiVanBanController@store');
 Route::post('/updateLoaiVanBan/{id}','loaiVanBanController@update');
 Route::get('/deleteLoaiVanBan/{id}','loaiVanBanController@destroy');
+
+// Đơn vị
+Route::post('/addDonVi','DonViController@store');
+Route::post('/updateDonVi/{id}','DonViController@update');
+Route::get('/deleteDonVi/{id}','DonViController@destroy');
 
 // Chức năng
 Route::post('/addChucNang','PermissionController@store')->middleware('can:chucnang_them');

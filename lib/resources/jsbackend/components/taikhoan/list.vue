@@ -48,12 +48,10 @@ export default {
         },
         deleteData(id){
             if(confirm('ban muon xoa that a ?') == true){
-                axios.get(`/px03/public/deleteTaiKhoan/${id}`)
+                axios.get(`/guinhanvb/deleteTaiKhoan/${id}`)
                 .then(reponse=>{
-                    this.$store.dispatch('acListTaiKhoan',this.currentPage);
-                    if(this.$router.history.current.path !=='/TaiKhoan'){
-                        this.$router.push('/TaiKhoan');
-                    }
+                    this.$emit('deleted');
+                    alert('Xóa Thành công !');
                 })
             }
         },

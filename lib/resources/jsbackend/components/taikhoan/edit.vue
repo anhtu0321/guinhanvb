@@ -49,7 +49,7 @@
 		<div class="container-fluid">
         	<div class="row">
             	<div class="col-md-8 list">
-					<list :listData="listData" @loadDataById="loadDataById"></list>
+					<list :listData="listData" @loadDataById="loadDataById" @deleted="loadData()"></list>
 				</div>
 			</div>
 		</div>
@@ -89,6 +89,7 @@ export default {
 			error:'',
 			roles:[],
 			listRoles:'',
+			listData:'',
 		}
 	},
 	computed:{
@@ -123,7 +124,7 @@ export default {
             .then(response=>{
 				this.fullname = response.data[0].fullname;
 				this.username = response.data[0].username;
-				this.roles = response.data[0].roles;
+				this.roles = response.data[0].roles.map(e=> e.id);
             })
 		},
 		loadData(){
