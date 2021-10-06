@@ -6,7 +6,10 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Tên loại</th>
+                            <th>Tên Đơn vị</th>
+                            <th>Ký hiệu</th>
+                            <th>Đơn vị cha</th>
+                            <th>Khối</th>
                             <th>Thứ tự</th>
                             <th>Trạng thái</th>
                             <th>Cập nhật</th>
@@ -15,7 +18,10 @@
                     <tbody>
                         <tr v-for="(list, index) in listData.data" :key="list.id" :class="list.id == idEdit? 'tractive':''">
                             <td>{{index + 1}}</td>
-                            <td>{{list.ten_loai}}</td>
+                            <td>{{list.ten_phong}}</td>
+                            <td>{{list.ky_hieu}}</td>
+                            <td>{{list.donvicha != null?list.donvicha.ky_hieu:''}}</td>
+                            <td>{{xulykhoi(list.khoi)}}</td>
                             <td>{{list.thu_tu}}</td>
                             <td>{{list.trang_thai == 1? "Sử dụng" : "Không sử dụng"}}</td>
                             <td>
@@ -64,7 +70,28 @@ export default {
 				}
 			}
 			return false;
-		}
+		},
+        xulykhoi(number){
+            switch (number) {
+                case 1:
+                    return "Ban Giám đốc"
+                    break;
+                case 2:
+                    return "Khối Xây dựng lực lượng"
+                    break;
+                case 3:
+                    return "Khối An ninh"
+                    break;
+                case 4:
+                    return "Khối Cảnh sát"
+                    break;
+                case 5:
+                    return "Khối huyện, thành phố"
+                    break;
+                default:
+                    break;
+            }
+        },
     },
     mounted(){
         this.idEdit = this.$route.params.id;

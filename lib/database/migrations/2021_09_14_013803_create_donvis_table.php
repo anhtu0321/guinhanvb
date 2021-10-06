@@ -21,6 +21,7 @@ class CreateDonvisTable extends Migration
             $table->integer('khoi');
             $table->integer('thu_tu');
             $table->integer('trang_thai');
+            $table->integer('parent_id');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -13,64 +13,43 @@ class DonViController extends Controller
      */
     public function index()
     {
-        return donvi::paginate(10);
+        return donvi::with('donvicha')->orderBy('parent_id','asc')->orderBy('khoi','asc')->orderBy('thu_tu','asc')->paginate(10);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+
+    public function donvicha()
     {
-        //
+        return donvi::where('parent_id',null)->orderBy('khoi','asc')->orderBy('thu_tu','asc')->get();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
+
     public function store(Request $request)
     {
         $this->validateForm($request);
         $donvi = new donvi;
-        $donvi->ten_loai = $request->ten_loai;
+        $donvi->ten_phong = $request->ten_phong;
+        $donvi->ky_hieu = $request->ky_hieu;
+        $donvi->mat_khau = $request->mat_khau;
+        $donvi->khoi = $request->khoi;
+        $donvi->parent_id = $request->parent_id;
         $donvi->thu_tu = $request->thu_tu;
         $donvi->trang_thai = $request->trang_thai;
         $donvi->save();
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         return donvi::find($id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
         $this->validateForm($request);
@@ -81,19 +60,14 @@ class DonViController extends Controller
         $donvi->save();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         donvi::destroy($id);
     }
     public function validateForm(Request $request){
         return $request->validate([
-            'ten_loai' => 'required',
+            'ten_phong' => 'required',
+            'ky_hieu' => 'required',
             'thu_tu' => 'required|numeric',
         ], 
         $messages = [
