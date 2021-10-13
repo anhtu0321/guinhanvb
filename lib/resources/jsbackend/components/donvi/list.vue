@@ -25,8 +25,8 @@
                             <td>{{list.thu_tu}}</td>
                             <td>{{list.trang_thai == 1? "Sử dụng" : "Không sử dụng"}}</td>
                             <td>
-                                <router-link class="btn btn-primary btn-sm" :to="`/loaivanban/edit/${list.id}`" @click.native="loadDataById(list.id)" v-if="ktquyen('loaivanban_sua')">Sửa</router-link>
-                                <button class="btn btn-danger btn-sm" @click.prevent="deleteById(list.id)" v-if="ktquyen('loaivanban_xoa')">Xóa</button>
+                                <router-link class="btn btn-primary btn-sm" :to="`/donvi/edit/${list.id}`" @click.native="loadDataById(list.id)" v-if="ktquyen('donvi_sua')">Sửa</router-link>
+                                <button class="btn btn-danger btn-sm" @click.prevent="deleteById(list.id)" v-if="ktquyen('donvi_xoa')">Xóa</button>
                             </td>
                         </tr>
                     </tbody>
@@ -57,7 +57,7 @@ export default {
             this.$emit('loadDataById', id);
         },
         deleteById(id){
-            axios.get('/guinhanvb/deleteLoaiVanBan/'+id)
+            axios.get('/guinhanvb/deleteDonVi/'+id)
             .then(res=>{
                 this.$emit('deleted');
                 alert('Xóa Thành công !');

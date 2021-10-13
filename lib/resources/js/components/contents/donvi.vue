@@ -1,26 +1,18 @@
 <template>
-    <div class="item">
+    <div class="item-component">
         <button class="btn" @click="show" v-if="showMore"><i class="fas fa-minus"></i></button> 
         <button class="btn" @click="show" v-else><i class="fas fa-plus"></i></button> 
         <div class="item__all">
             <div class="item__parent">
                 <div class="item__info">
-                    PV01
+                    {{ list.ky_hieu }}
                     <span class="item__total">12</span>
                 </div>
             </div>
 			<transition name="showdonvi">
 				<div class="item__children" v-if="showMore">
-					<div class="item__info">
-						Trưởng phòng
-						<span class="item__total">12</span>
-					</div>
-					<div class="item__info">
-						Đ/c Hoàng Văn Tiến - PTP
-						<span class="item__total">12</span>
-					</div>
-					<div class="item__info">
-						Đ/c Vũ Hoàng Hải - PTP
+					<div v-for="list in list.donvicon" :key="list.id" class="item__info">
+						{{ list.ten_phong }}
 						<span class="item__total">12</span>
 					</div>
 				</div>
@@ -36,7 +28,8 @@ export default {
         return{
             showMore:false,
         }
-    },
+	},
+	props:["list"],
     methods:{
         show(){
             this.
@@ -47,18 +40,14 @@ export default {
 </script>
 
 <style scoped>
-.item{
-	flex-basis: 45%;
-	margin:2.5%;
-	display: flex;
-	justify-content: start;
+.item-component{
+	display:flex;
 	align-items: baseline;
 }
 .item__all{
 	display:flex;
 	flex-direction: column;
 	align-items: baseline;
-
 }
 .item__children{
 	position:relative;
@@ -67,7 +56,6 @@ export default {
 	align-items: baseline;
 	justify-content: space-evenly;
 	margin-left:10px;
-
 }
 .item__children .item__info{
 	margin-top:5px;
@@ -91,7 +79,7 @@ export default {
 .item__children .item__info:last-child::after{
 	border-left:none;
 }
-.item .item__info{
+.item__info{
 	margin-left:10px;
 	font-size:1.1rem;
 	font-weight: bold;
@@ -103,10 +91,10 @@ export default {
 	cursor: pointer;
 	position: relative;
 }
-.item .item__info:hover{
+.item__info:hover{
 	color:#fff9bd;
 }
-.item .item__total{
+.item__total{
 	position: absolute;
 	width:25px;
 	height: 25px;

@@ -26,17 +26,10 @@
 									<label class="col-form-label col-form-label-sm">Đơn vị cha</label>
 									<select v-model="parent_id" class="form-control form-control-sm" 
 										:class="{'is-invalid' : (error && error.parent_id)}">
-										<option value="">--- Không ---</option>
+										<option value="0">-- Không --</option>
 										<option v-for="list in listDonViCha" :key="list.id" :value="list.id">{{list.ky_hieu}}</option>
 									</select>
 									<p class="thongbao" v-if="error && error.parent_id">{{ error.parent_id[0]}}</p>
-								</div>
-								<div class="form-group col-md-2">
-									<label class="col-form-label col-form-label-sm">Mật khẩu</label>
-									<input type="password" class="form-control form-control-sm" 
-										:class="{'is-invalid' : (error && error.mat_khau)}" 
-										v-model="mat_khau">
-									<p class="thongbao" v-if="error && error.mat_khau">{{ error.mat_khau[0]}}</p>
 								</div>
 							</div>
 
@@ -46,6 +39,7 @@
 									<select class="form-control form-control-sm" 
 										:class="{'is-invalid' : (error && error.khoi)}" 
 										v-model="khoi">
+										<option value="0">-- Không --</option>
 										<option value="1">Ban Giám đốc</option>
 										<option value="2">Khối Xây dựng lực lượng</option>
 										<option value="3">Khối An ninh</option>
@@ -111,11 +105,10 @@ export default {
 			link:'Thêm',
 			ten_phong:'',
             ky_hieu:'',
-            mat_khau:'',
-            khoi:'',
+            khoi:0,
             thu_tu:'',
             trang_thai:1,
-            parent_id:'',
+            parent_id:0,
 			listData:'',
 			listDonViCha:'',
 			error:'',
@@ -134,7 +127,6 @@ export default {
 			let data = new FormData;
 			data.append('ten_phong', this.ten_phong);
 			data.append('ky_hieu', this.ky_hieu);
-			data.append('mat_khau', this.mat_khau);
 			data.append('khoi', this.khoi);
 			data.append('parent_id', this.parent_id);
 			data.append('thu_tu', this.thu_tu);
@@ -143,7 +135,6 @@ export default {
 			.then(response=>{
 				this.ten_phong = '';
 				this.ky_hieu = '';
-				this.mat_khau = '';
 				this.thu_tu = '';
 				this.error = '';
 				this.loadData(this.page);

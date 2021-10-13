@@ -11,6 +11,7 @@ Route::get('/getListLoai','loaiVanBanController@index');
 Route::get('/getListLoai/{id}','loaiVanBanController@edit');
 // api DonVi
 Route::get('/getDonVi','DonViController@index');
+Route::get('/getDonViNoPage','DonViController@indexnopage');
 Route::get('/getDonViCha','DonViController@donvicha');
 Route::get('/getDonVi/{id}','DonViController@edit');
 // Danh sach chuc nang cha

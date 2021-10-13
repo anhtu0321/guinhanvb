@@ -12,4 +12,7 @@ class donvi extends Model
     public function donvicha(){
         return $this->belongsTo('App\donvi','parent_id','id')->select('id','ky_hieu');
     }
+    public function donvicon(){
+        return $this->hasMany('App\donvi','parent_id','id')->select('parent_id','id','ky_hieu','ten_phong');
+    }
 }

@@ -154,6 +154,7 @@ export default {
 		this.loadDataById(this.$route.params.id);
 		this.loadListRole();
 		this.$store.dispatch('aclistPermissionOfUser');
+		axios.get('/guinhanvb/api/getDonViNoPage')
 	},
 }
 </script>

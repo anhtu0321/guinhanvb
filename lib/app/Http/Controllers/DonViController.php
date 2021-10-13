@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\donvi;
+
 class DonViController extends Controller
 {
     /**
@@ -16,10 +17,14 @@ class DonViController extends Controller
         return donvi::with('donvicha')->orderBy('parent_id','asc')->orderBy('khoi','asc')->orderBy('thu_tu','asc')->paginate(10);
     }
 
+    public function indexnopage()
+    {
+        return donvi::with('donvicon')->orderBy('thu_tu','asc')->get();
+    }
 
     public function donvicha()
     {
-        return donvi::where('parent_id',null)->orderBy('khoi','asc')->orderBy('thu_tu','asc')->get();
+        return donvi::where('parent_id',0)->orderBy('khoi','asc')->orderBy('thu_tu','asc')->get();
     }
 
 
@@ -30,14 +35,13 @@ class DonViController extends Controller
         $donvi = new donvi;
         $donvi->ten_phong = $request->ten_phong;
         $donvi->ky_hieu = $request->ky_hieu;
-        $donvi->mat_khau = $request->mat_khau;
+        $donvi->mat_khau = "1";
         $donvi->khoi = $request->khoi;
         $donvi->parent_id = $request->parent_id;
         $donvi->thu_tu = $request->thu_tu;
         $donvi->trang_thai = $request->trang_thai;
         $donvi->save();
     }
-
 
     public function show($id)
     {
@@ -54,7 +58,13 @@ class DonViController extends Controller
     {
         $this->validateForm($request);
         $donvi = donvi::find($id);
-        $donvi->ten_loai = $request->ten_loai;
+        $donvi->ten_phong = $request->ten_phong;
+        $donvi->ky_hieu = $request->ky_hieu;
+        if($request->mat_khau != ''){
+            $donvi->mat_khau = $request->mat_khau;
+        }
+        $donvi->khoi = $request->khoi;
+        $donvi->parent_id = $request->parent_id;
         $donvi->thu_tu = $request->thu_tu;
         $donvi->trang_thai = $request->trang_thai;
         $donvi->save();
