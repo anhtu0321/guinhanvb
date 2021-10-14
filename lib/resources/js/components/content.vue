@@ -5,7 +5,7 @@
 				<div class="box__title">BAN GIÁM ĐỐC</div>
 				<div class="box__items">
 					<div v-for="list in bgd" :key="list.id" class="item">
-						<div  class="item__info">
+						<div  class="item__info" @click="showModal(list.ten_phong)">
 							{{ list.ten_phong }}
 							<span class="item__total">12</span>
 						</div>
@@ -48,26 +48,30 @@
 		<!-- test thử modal -->
 
 		<!-- Modal -->
-		<div class="modal">
+		<div class="modal" v-show="modal" @click="hideModal()">
 			<div class="modal-dialog">
+				<div class="btn-close" @click="hideModal()">
+					<i class="fas fa-times"></i>
+				</div>
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">TÊN ĐƠN VỊ Ở ĐÂY</h5>
-						<button type="button" class="btn-close"><i class="fas fa-times"></i></button>
+						<h5 class="modal-title">{{ten_phong}}</h5>
 					</div>
 					<div class="modal-body">
 						<form>
-							<div class="form-group row">
-								<label for="inputPassword" class="col-sm-2 col-form-label">Mật khẩu</label>
+							<div class="form-group">
+								<label for="inputPassword" >Mật khẩu</label>
 								<div class="col-sm-10">
-								<input type="password" class="form-control" id="inputPassword" placeholder="Password">
+									<input type="password" class="form-control" id="inputPassword" placeholder="Password">
 								</div>
 							</div>
-							<button type="submit" class="btn btn-primary">Đăng nhập</button>
+							<div class="form-group text-center">
+								<button type="submit" class="btn btn-primary">Đăng nhập</button>
+							</div>
 						</form>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary">Close</button>
+						<button type="button" class="btn btn-secondary" @click="hideModal()">Close</button>
 					</div>
 				</div>
 			</div>
@@ -81,6 +85,8 @@ export default {
 	data(){
 		return {
 			listData:[],
+			modal: false,
+			ten_phong:'',
 		}
 	},
 	computed:{
@@ -115,8 +121,20 @@ export default {
 			axios.get('/guinhanvb/api/getDonViNoPage')
 			.then(res=>{
 				this.listData = res.data;
-				console.log(res.data);
 			})
+		},
+		hideModal(){
+			this.modal = false;
+		},
+		showModal(ten_phong){
+			this.ten_phong = ten_phong.toUpperCase();
+			this.modal = true;
+		},
+		keepModal(){
+			var dialog = document.getElementsByClassName('modal-dialog')[0];
+			dialog.addEventListener('click', function(event){
+			event.stopPropagation();
+		});
 		}
 	},
 	components:{
@@ -124,6 +142,9 @@ export default {
 	},
 	created(){
 		this.loadData();
+	},
+	mounted(){
+		this.keepModal();
 	}
 }
 </script>
@@ -190,12 +211,7 @@ export default {
 	justify-content: center;
 	align-items: center;
 }
-.btn{
-	padding:5px;
-	background:white;
-	border:1px solid #dadada;
-	cursor: pointer;
-}
+
 @media (min-width: 768px){
 .item{
 	flex-basis: 30%;
@@ -230,77 +246,83 @@ export default {
 	max-width:calc(100% - 50px);
 	background: #ffffff;
 	margin-top:-300px;
-	border-radius:5px;
+	border-radius:calc(0.5rem - 1px);
 	box-shadow: 1px 2px 5px #3f3f3f;
+	animation: modalFadeIn ease .5s;
 }
-.modal-header {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1rem;
-  border-bottom: 1px solid #dee2e6;
-  border-top-left-radius: calc(0.3rem - 1px);
-  border-top-right-radius: calc(0.3rem - 1px);
+ .modal-header {
+	font-family: Arial, Helvetica, sans-serif;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1.5rem 1rem;
+	border-bottom: 1px solid #dee2e6;
+	border-top-left-radius: calc(0.5rem - 1px);
+	border-top-right-radius: calc(0.5rem - 1px);
+	background: #aa1717;
 }
-.modal-header .btn-close {
-  padding: 0.5rem 0.5rem;
-  margin: -0.5rem -0.5rem -0.5rem auto;
-}
+.modal-dialog .btn-close {
+	position: absolute;
+	right: 0.5rem;
+	top: 0.5rem;
+	padding: 0.5rem 0.5rem;
+	margin: -0.5rem -0.5rem -0.5rem auto;
+	cursor: pointer;
+	color: rgb(255, 255, 255);
 
+}
 .modal-title {
-  margin-bottom: 0;
-  line-height: 1.5;
+	margin-bottom: 0;
+	line-height: 1.5;
+	color:#ffffff;
+	font-size: 1.3rem;
+	text-align: center;
 }
-
 .modal-body {
-  position: relative;
-  flex: 1 1 auto;
-  padding: 1rem;
+	position: relative;
+	padding: 1.75rem 1rem;
 }
-
+.modal-body .form-group{
+	width:100%;
+}
+.form-group .form-control{
+	width:100%;
+	padding: 0.75rem 0.75rem;
+	margin: 24px 24px 24px auto;
+	border: 1px solid #c5c5c5;
+	border-radius: 0.3rem;
+	box-sizing: border-box;
+}
+.form-group .form-control:focus{
+	border: 2px solid #d44330;
+	margin:23px 23px 23px auto;
+	outline:none;
+}
+.form-group .btn{
+	width:100%;
+}
 .modal-footer {
-  display: flex;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0.75rem;
-  border-top: 1px solid #dee2e6;
-  border-bottom-right-radius: calc(0.3rem - 1px);
-  border-bottom-left-radius: calc(0.3rem - 1px);
+	display: flex;
+	flex-wrap: wrap;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 0.75rem;
+	border-top: 1px solid #dee2e6;
+	border-bottom-right-radius: calc(0.3rem - 1px);
+	border-bottom-left-radius: calc(0.3rem - 1px);
 }
 .modal-footer > * {
-  margin: 0.25rem;
-}
-
-@media (min-width: 576px) {
-  .modal-dialog {
-    max-width: 500px;
-    margin: 1.75rem auto;
-  }
-
-  .modal-dialog-scrollable {
-    height: calc(100% - 3.5rem);
-  }
-
-  .modal-dialog-centered {
-    min-height: calc(100% - 3.5rem);
-  }
-
-  .modal-sm {
-    max-width: 300px;
-  }
-}
-@media (min-width: 992px) {
-  .modal-lg,
-.modal-xl {
-    max-width: 800px;
-  }
-}
-@media (min-width: 1200px) {
-  .modal-xl {
-    max-width: 1140px;
-  }
+  	margin: 0.25rem;
+} 
+@keyframes modalFadeIn{
+	from{
+		opacity: 0;
+		transform: translateY(-100px);
+	}
+	to{
+		opacity:1;
+		transform: translateY(0px);
+	}
 }
 </style>
