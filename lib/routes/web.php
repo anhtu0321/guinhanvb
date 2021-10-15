@@ -16,7 +16,8 @@ Route::group(['prefix'=>'admin'],function(){
     Route::get('/logout','loginController@getLogout')->name('logout');
     Route::get('/home', 'HomeController@index')->name('home');
 });
-
+// login tai khoan cac don vi
+Route::post('/loginDonVi','loginController@logindonvi');
 // loaivanban
 Route::post('/addLoaiVanBan','loaiVanBanController@store');
 Route::post('/updateLoaiVanBan/{id}','loaiVanBanController@update');

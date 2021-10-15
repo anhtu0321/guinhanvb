@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Auth;
+use App\donvi;
 class loginController extends Controller
 {
     public function getLogin(){
@@ -33,6 +34,17 @@ class loginController extends Controller
     }
     public function getUser(){
         return Auth::user();
+    }
+    // sử dụng cho các đơn vị đăng nhập
+    public function logindonvi(Request $request){
+        $data = donvi::find($request->id);
+        if($data->mat_khau == $request->password){
+            $request->session()->put(['id'=>$data->id, 'ten_phong'=>$data->ten_phong]);
+            return response()->json(['thành công'=>'thành công'],200);
+        }else{
+            return response()->json(['error'=>'Mật khẩu không đúng !'],401);
+        }
+        
     }
 }
 

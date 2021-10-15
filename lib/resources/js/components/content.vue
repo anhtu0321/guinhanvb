@@ -5,7 +5,7 @@
 				<div class="box__title">BAN GIÁM ĐỐC</div>
 				<div class="box__items">
 					<div v-for="list in bgd" :key="list.id" class="item">
-						<div  class="item__info" @click="showModal(list.ten_phong)">
+						<div  class="item__info" @click="showModal(list.ten_phong, list.id)">
 							{{ list.ten_phong }}
 							<span class="item__total">12</span>
 						</div>
@@ -58,15 +58,18 @@
 						<h5 class="modal-title">{{ten_phong}}</h5>
 					</div>
 					<div class="modal-body">
-						<form>
+						<form @submit.prevent="login()">
 							<div class="form-group">
 								<label for="inputPassword" >Mật khẩu</label>
 								<div class="col-sm-10">
-									<input type="password" class="form-control" id="inputPassword" placeholder="Password">
+									<input v-model="password" type="password" class="form-control" id="inputPassword" placeholder="Password">
 								</div>
 							</div>
 							<div class="form-group text-center">
 								<button type="submit" class="btn btn-primary">Đăng nhập</button>
+							</div>
+							<div class="form-group text-center" v-if="error !=''">
+								{{error}}
 							</div>
 						</form>
 					</div>
@@ -86,7 +89,10 @@ export default {
 		return {
 			listData:[],
 			modal: false,
+			id:'',
 			ten_phong:'',
+			password:'',
+			error:'',
 		}
 	},
 	computed:{
@@ -126,8 +132,9 @@ export default {
 		hideModal(){
 			this.modal = false;
 		},
-		showModal(ten_phong){
+		showModal(ten_phong, id){
 			this.ten_phong = ten_phong.toUpperCase();
+			this.id = id;
 			this.modal = true;
 		},
 		keepModal(){
@@ -135,6 +142,18 @@ export default {
 			dialog.addEventListener('click', function(event){
 			event.stopPropagation();
 		});
+		},
+		login(){
+			var data = new FormData();
+			data.append('id', this.id);
+			data.append('password', this.password);
+			axios.post('/guinhanvb/loginDonVi', data)
+			.then(res=>{
+				// console.log(document.cookie);
+			})
+			.catch(error=>{
+				this.error = error.response.data.error;
+			});
 		}
 	},
 	components:{
@@ -300,6 +319,7 @@ export default {
 }
 .form-group .btn{
 	width:100%;
+	margin-top:5px;
 }
 .modal-footer {
 	display: flex;
