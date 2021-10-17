@@ -68,7 +68,7 @@
 							<div class="form-group text-center">
 								<button type="submit" class="btn btn-primary">Đăng nhập</button>
 							</div>
-							<div class="form-group text-center" v-if="error !=''">
+							<div class="form-group text-center thongbao" v-if="error !=''">
 								{{error}}
 							</div>
 						</form>
@@ -135,6 +135,7 @@ export default {
 		showModal(ten_phong, id){
 			this.ten_phong = ten_phong.toUpperCase();
 			this.id = id;
+			this.error = '';
 			this.modal = true;
 		},
 		keepModal(){
@@ -245,32 +246,32 @@ export default {
 }
 /* css cho modal */
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1055;
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  outline: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	font-family: Arial, Helvetica, sans-serif;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1055;
+	width: 100%;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	outline: 0;
+	background: rgba(0, 0, 0, 0.4);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 .modal-dialog {
   	position: relative;
 	width:500px;
 	max-width:calc(100% - 50px);
 	background: #ffffff;
-	margin-top:-300px;
+	margin-top:-10%;
 	border-radius:calc(0.5rem - 1px);
 	box-shadow: 1px 2px 5px #3f3f3f;
 	animation: modalFadeIn ease .5s;
 }
  .modal-header {
-	font-family: Arial, Helvetica, sans-serif;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -288,7 +289,6 @@ export default {
 	margin: -0.5rem -0.5rem -0.5rem auto;
 	cursor: pointer;
 	color: rgb(255, 255, 255);
-
 }
 .modal-title {
 	margin-bottom: 0;
@@ -303,19 +303,24 @@ export default {
 }
 .modal-body .form-group{
 	width:100%;
+	margin-top:15px;
 }
 .form-group .form-control{
 	width:100%;
 	padding: 0.75rem 0.75rem;
-	margin: 24px 24px 24px auto;
+	margin: 12px 12px 12px auto;
 	border: 1px solid #c5c5c5;
 	border-radius: 0.3rem;
 	box-sizing: border-box;
 }
 .form-group .form-control:focus{
 	border: 2px solid #d44330;
-	margin:23px 23px 23px auto;
+	margin:11px 11px 11px auto;
 	outline:none;
+}
+.form-group.thongbao{
+	color:rgb(165, 7, 7);
+	font-weight: 500;
 }
 .form-group .btn{
 	width:100%;
