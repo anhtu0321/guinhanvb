@@ -4,14 +4,14 @@
         <button class="btn" @click="show" v-else><i class="fas fa-plus"></i></button> 
         <div class="item__all">
             <div class="item__parent">
-                <div class="item__info">
+                <div class="item__info" @click="emitShowModal(list.ten_phong, list.id)">
                     {{ list.ky_hieu }}
                     <span class="item__total">12</span>
                 </div>
             </div>
 			<transition name="showdonvi">
 				<div class="item__children" v-if="showMore">
-					<div v-for="list in list.donvicon" :key="list.id" class="item__info">
+					<div v-for="list in list.donvicon" :key="list.id" class="item__info" @click="emitShowModal(list.ten_phong, list.id)">
 						{{ list.ten_phong }}
 						<span class="item__total">12</span>
 					</div>
@@ -34,7 +34,10 @@ export default {
         show(){
             this.
             showMore = !this.showMore;
-        }
+		},
+		emitShowModal(ten_phong, id){
+			this.$emit('showModal', ten_phong, id);
+		}
     }
 }
 </script>

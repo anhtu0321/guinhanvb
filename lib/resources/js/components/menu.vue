@@ -25,15 +25,17 @@ export default {
 	mounted(){
 		document.addEventListener('scroll', function(){
 			var menu = document.getElementById('menu');
-			if(window.scrollY>150) {menu.classList.add('fix-menu');}
-			else{menu.classList.remove('fix-menu');}
+			if(menu != undefined){
+				if(window.scrollY>150) {menu.classList.add('fix-menu');}
+				else{menu.classList.remove('fix-menu');}
+			}
 			
 		});
 	}
 }
 </script>
 
-<style scope>
+<style scoped>
 .fix-menu{
 	position:fixed;
 	top:0;

@@ -126,7 +126,7 @@ export default {
 			return this.$store.state.listPermissionOfUser;
 		},
 		page(){
-			return this.$store.state.pageList;
+			return this.$store.state.pageDonVi;
 		}
 	},
 	methods:{

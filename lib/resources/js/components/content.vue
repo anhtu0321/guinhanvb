@@ -16,7 +16,7 @@
 				<div class="box__title">KHỐI XÂY DỰNG LỰC LƯỢNG</div>
 				<div class="box__items">
 					<div v-for="list in xdll" :key="list.id" class="item">
-						<donvi :list="list"></donvi>
+						<donvi :list="list" @showModal="showModal"></donvi>
 					</div>
 				</div>
 			</div>
@@ -24,7 +24,7 @@
 				<div class="box__title">KHỐI AN NINH</div>
 				<div class="box__items">
 					<div v-for="list in kan" :key="list.id" class="item">
-						<donvi :list="list"></donvi>
+						<donvi :list="list" @showModal="showModal"></donvi>
 					</div>
 				</div>
 			</div>
@@ -32,7 +32,7 @@
 				<div class="box__title">KHỐI CẢNH SÁT</div>
 				<div class="box__items">
 					<div v-for="list in kcs" :key="list.id" class="item">
-						<donvi :list="list"></donvi>
+						<donvi :list="list" @showModal="showModal"></donvi>
 					</div>
 				</div>
 			</div>
@@ -40,7 +40,7 @@
 				<div class="box__title">KHỐI HUYỆN, THỊ, THÀNH</div>
 				<div class="box__items">
 					<div v-for="list in kh" :key="list.id" class="item">
-						<donvi :list="list"></donvi>
+						<donvi :list="list" @showModal="showModal"></donvi>
 					</div>
 				</div>
 			</div>
@@ -136,8 +136,10 @@ export default {
 			this.ten_phong = ten_phong.toUpperCase();
 			this.id = id;
 			this.error = '';
+			this.password='';
 			this.modal = true;
 		},
+		
 		keepModal(){
 			var dialog = document.getElementsByClassName('modal-dialog')[0];
 			dialog.addEventListener('click', function(event){
@@ -150,7 +152,7 @@ export default {
 			data.append('password', this.password);
 			axios.post('/guinhanvb/loginDonVi', data)
 			.then(res=>{
-				// console.log(document.cookie);
+				this.$router.push('/guinhan');
 			})
 			.catch(error=>{
 				this.error = error.response.data.error;

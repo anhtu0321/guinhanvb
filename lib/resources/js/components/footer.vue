@@ -25,7 +25,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #footer{
 	width:100%;
 	min-height:200px;
@@ -38,7 +38,6 @@ export default {
 }
 .footer__top{
 	padding:25px 0;
-	margin: -5px 0;
 	display: flex;
 	justify-content: space-between;
 }

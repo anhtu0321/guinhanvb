@@ -9,15 +9,13 @@ Route::get('/', function () {
 // backend
 // Lấy danh sách quyền của User login
 Route::get('/listPermissionOfUser','UserController@getPermissons');
-
+// đăng nhập trang quản trị admin
 Route::group(['prefix'=>'admin'],function(){
     Route::get('/', 'loginController@getLogin')->name('login');
     Route::post('/', 'loginController@postLogin');
     Route::get('/logout','loginController@getLogout')->name('logout');
     Route::get('/home', 'HomeController@index')->name('home');
 });
-// login tai khoan cac don vi
-Route::post('/loginDonVi','loginController@logindonvi');
 // loaivanban
 Route::post('/addLoaiVanBan','loaiVanBanController@store');
 Route::post('/updateLoaiVanBan/{id}','loaiVanBanController@update');
@@ -42,3 +40,10 @@ Route::get('/deletePhanQuyen/{id}','RoleController@destroy')->middleware('can:ph
 Route::post('/addTaiKhoan','UserController@store')->middleware('can:taikhoan_them');
 Route::post('/updateTaiKhoan/{id}','UserController@update')->middleware('can:taikhoan_sua');
 Route::get('/deleteTaiKhoan/{id}','UserController@destroy')->middleware('can:taikhoan_xoa');
+
+// FRONTEND ********************************************************************************
+// login tai khoan cac don vi
+Route::post('/loginDonVi','loginController@logindonvi');
+
+// Tải dữ liệu sau khi login theo đơn vị
+Route::get('/guinhantheodonvi', 'guinhanController@loaddata');
