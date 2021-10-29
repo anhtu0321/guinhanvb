@@ -25,12 +25,16 @@ export default {
         return{
             id:'',
             ten_phong:'',
-            menu:'nhan',
+        }
+    },
+    computed:{
+        menu(){
+            return this.$store.state.menu;
         }
     },
     methods:{
         show(menu){
-            this.menu = menu;
+            this.$store.dispatch('acMenu', menu);
         }
     },
     created(){

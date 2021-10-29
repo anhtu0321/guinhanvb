@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Phần mềm gửi nhận văn bản nội bộ</title>
     <link rel="stylesheet" href="{{ asset('lib/public/awesome/css/all.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('lib/public/css/bootstrap.min.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('lib/public/css/app.css') }}">
 </head>
 <body>

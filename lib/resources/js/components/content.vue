@@ -316,8 +316,7 @@ export default {
 	box-sizing: border-box;
 }
 .form-group .form-control:focus{
-	border: 2px solid #d44330;
-	margin:11px 11px 11px auto;
+	/* margin:11px 11px 11px auto; */
 	outline:none;
 }
 .form-group.thongbao{

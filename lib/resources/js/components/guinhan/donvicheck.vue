@@ -1,24 +1,23 @@
 <template>
     <div class="item-component">
-        <button class="btn" @click="show" v-if="showMore"><i class="fas fa-minus"></i></button> 
-        <button class="btn" @click="show" v-else><i class="fas fa-plus"></i></button> 
-        <div class="item__all">
-            <div class="item__parent">
-                <div class="item__info" @click="emitShowModal(list.ten_phong, list.id)">
-                    {{ list.ky_hieu }}
-                    <span class="item__total">12</span>
-                </div>
-            </div>
-			<transition name="showdonvi">
-				<div class="item__children" v-if="showMore">
-					<div v-for="list in list.donvicon" :key="list.id" class="item__info" @click="emitShowModal(list.ten_phong, list.id)">
-						{{ list.ten_phong }}
-						<span class="item__total">12</span>
+		<div class="item" v-for="list in lists" :key="list.id">
+			<span class="btn" @click="hide(list.id)" v-if="checkshow(list.id)"><i class="fas fa-minus"></i></span> 
+			<span class="btn" @click="show(list.id)" v-else><i class="fas fa-plus"></i></span> 
+			<div class="item__all">
+				<div class="item__parent">
+					<div class="item__info">
+						<input type="checkbox" :value="list.id" v-model="donvinhan" @change="emitData()" :id="list.id"> <label :for="list.id">{{ list.ky_hieu }}</label>
 					</div>
 				</div>
-			</transition>
-        </div>
-        
+				<transition name="showdonvi">
+					<div class="item__children" v-if="checkshow(list.id)">
+						<div v-for="list in list.donvicon" :key="list.id" class="item__info">
+							<input type="checkbox" :value="list.id" v-model="donvinhan" @change="emitData()" :id="list.id"><label :for="list.id"> {{ list.ten_phong }}</label>
+						</div>
+					</div>
+				</transition>
+			</div>
+		</div>
     </div>
 </template>
 
@@ -26,16 +25,27 @@
 export default {
     data(){
         return{
-            showMore:false,
+			donvinhan:[],
+			test:"hoang van tu",
+			key:[],
         }
 	},
-	props:["list"],
+	props:["lists"],
     methods:{
-        show(){
-            this.showMore = !this.showMore;
+        show(key){
+			this.key.push(key);
 		},
-		emitShowModal(ten_phong, id){
-			this.$emit('showModal', ten_phong, id);
+		hide(key){
+			this.key = this.key.filter(e=>{
+				return e != key;
+			});
+		},
+		checkshow(key){
+			return this.key.includes(key);
+		},
+		emitData(){
+			var data = this.donvinhan;
+			this.$emit('loadDonViNhan', data);
 		}
     }
 }
@@ -43,13 +53,22 @@ export default {
 
 <style scoped>
 .item-component{
+	display: flex;
+	flex-direction: row;
+	width:100%;
+}
+.item{
 	display:flex;
 	align-items: baseline;
+	justify-content: start;
+	flex-basis: 50%;
+}
+.item-component label{
+	cursor: pointer;
 }
 .item__all{
 	display:flex;
 	flex-direction: column;
-	align-items: baseline;
 }
 .item__children{
 	position:relative;
@@ -83,18 +102,17 @@ export default {
 }
 .item__info{
 	margin-left:10px;
-	font-size:1.1rem;
-	font-weight: bold;
-	color:#ffffff;
-	background: #00abe4;
-	padding:5px 15px;
-	border-radius:5px;
-	border:1px solid #dadada;
-	cursor: pointer;
+	/* font-size:1.1rem; */
+	/* font-weight: bold; */
+	/* color:#ffffff;
+	background: #00abe4; */
+	/* padding:5px 15px; */
+	/* border-radius:5px;
+	border:1px solid #dadada; */
 	position: relative;
 }
 .item__info:hover{
-	color:#fff9bd;
+	/* color:#fff9bd; */
 }
 .item__total{
 	position: absolute;

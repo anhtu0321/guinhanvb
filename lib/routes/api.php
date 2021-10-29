@@ -8,6 +8,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 // api loaivanban
 Route::get('/getListLoai','loaiVanBanController@index');
+Route::get('/getListLoaiFrontEnd','loaiVanBanController@indexfontend');
 Route::get('/getListLoai/{id}','loaiVanBanController@edit');
 // api DonVi
 Route::get('/getDonVi','DonViController@index');
