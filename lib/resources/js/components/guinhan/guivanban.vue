@@ -44,43 +44,19 @@
 							<div class="col-md-12">
 								<label for="donvinhan" class="form-label col-3">Đơn vị nhận</label>
 								<div class="khoi">
-									<div class="title-donvi"><input type="checkbox"> Ban Giám đốc</div>
+									<div class="title-donvi"><input type="checkbox" id="bgd-check" @change="checkbgd"> <label for="bgd-check">Ban Giám đốc</label></div>
 									<div class="items">
-										<div class="item" v-for="list in bgd" :key="list.id">
-											<input type="checkbox" :value="list.id" v-model="donvinhan"> {{list.ten_phong}}
+										<div class="item mb-3" v-for="list in bgd" :key="list.id">
+											<input type="checkbox" :value="list.id" v-model="donvinhan" :id="list.id" @change="changecheck"> <label :for="list.id">{{list.ten_phong}}</label> 
 										</div>
 									</div>
 								</div>
-								<div class="khoi">
-									<div class="title-donvi"><input type="checkbox"> Khối Xây dựng lực lượng</div>
-									<div class="items">
-										
-										<donvicheck :lists="xdll" @loadDonViNhan="donvixdll"></donvicheck>
-										
-									</div>
-								</div>
-								<div class="khoi">
-									<div class="title-donvi"><input type="checkbox"> Khối An ninh</div>
-									<div class="items">
-										<div class="item" v-for="list in kan" :key="list.id">
-											<donvicheck :list="list" @loadDonViNhan="donvikan"></donvicheck>
-										</div>
-									</div>
-								</div>
-								<div class="khoi">
-									<div class="title-donvi"><input type="checkbox"> Khối Cảnh sát</div>
-									<div class="items">
-										<div class="item" v-for="list in kcs" :key="list.id">
-											<donvicheck :list="list" @loadDonViNhan="donvikcs"></donvicheck>
-										</div>
-									</div>
-								</div>
-								<div class="khoi">
-									<div class="title-donvi"><input type="checkbox"> Khối huyện, thị, thành</div>
-									<div class="items">
-										<donvicheck :lists="kh" @loadDonViNhan="donvikh"></donvicheck>
-									</div>
-								</div>
+								
+								<donvicheck :lists="xdll" :idtitle="'xdlltitle'" :title="'Khối Xây dựng lực lượng'" @loadDonViNhan="donvixdll" ></donvicheck>
+								<donvicheck :lists="kan" :idtitle="'kantitle'" :title="'Khối An ninh'" @loadDonViNhan="donvikan"></donvicheck>
+								<donvicheck :lists="kcs" :idtitle="'kcstitle'" :title="'Khối Cảnh sát'" @loadDonViNhan="donvikcs"></donvicheck>
+								<donvicheck :lists="kh" :idtitle="'khtitle'" :title="'Khối huyện, thị, thành'" @loadDonViNhan="donvikh"></donvicheck>
+									
 							</div>
 						</div>
 						<div class="row mb-3">
@@ -154,12 +130,36 @@ export default {
 			.then(res=>{
 				this.listDataDonVi = res.data;
 			})
+			.catch( e=>{
+				this.loadData();
+				console.log('da loi');
+			})
 		},
 		loadLoai(){
 			axios.get("/guinhanvb/api/getListLoaiFrontEnd")
 			.then(res=>{
 				this.listLoai = res.data;
 			})
+		},
+		checkbgd(){
+			var check = document.getElementById('bgd-check');
+			if(check.checked == false){
+				this.donvinhan=[];
+			}else{
+				this.donvinhan = this.bgd.map(e=>{
+					return e.id;
+				})
+			}
+		},
+		changecheck(){
+			var check = document.getElementById('bgd-check');
+			var length = this.donvinhan.length;
+			var lengthbgd = this.bgd.length;
+			if(length == lengthbgd){
+				check.checked = true;
+			}else{
+				check.checked = false;
+			}
 		},
 		donvixdll(data){
 			this.dvxdll = data;
@@ -202,7 +202,29 @@ export default {
 }
 .title-donvi{
 	font-weight: bold;
-	padding:10px 0;
 	color:#00abe4;
+}
+.title-donvi label{
+	padding:10px 0;
+	cursor: pointer;
+}
+.items{
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+.item{
+	display: flex;
+	justify-content: start;
+	flex-basis: 23%;
+	align-items: center;
+	font-size: 1.1rem;
+}
+.item input{
+	margin-right:5px;
+}
+.item label{
+	cursor: pointer;
 }
 </style>
