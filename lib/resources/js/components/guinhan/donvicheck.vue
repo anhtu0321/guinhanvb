@@ -1,6 +1,8 @@
 <template>
 <div class="khoi">
-	<div class="title-donvi"><input type="checkbox" :id="idtitle" @change="checkall"> <label :for="idtitle"> {{ title }}</label></div>
+	<div class="title-donvi">
+		<input type="checkbox" :id="idtitle" @change="checkall"> <label :for="idtitle"> {{ title }}</label>
+	</div>
 	<div class="items">
 		<div class="item-component">
 			<div class="item" v-for="list in lists" :key="list.id">
@@ -14,9 +16,9 @@
 					</div>
 					<transition name="showdonvi">
 						<div class="item__children" v-if="checkshow(list.id)">
-							<input type="checkbox" :change="checkallchild"> <label :for="list.id"> Tất cả</label>
-							<div v-for="list in list.donvicon" :key="list.id" class="item__info">
-								<input type="checkbox" :value="list.id" v-model="donvicon" @change="emitData()" :id="list.id"> <label :for="list.id"> {{ list.ten_phong }}</label>
+							<input type="checkbox" @change="checkallchild(list.donvicon, list.id+'1')" :id="list.id+'1'"> <label :for="list.id+'1'"> Tất cả</label>
+							<div v-for="listc in list.donvicon" :key="listc.id" class="item__info">
+								<input type="checkbox" :value="listc.id" v-model="donvicon" @change="emitData(list.donvicon, list.id+'1')" :id="listc.id"> <label :for="listc.id"> {{ listc.ten_phong }}</label>
 							</div>
 						</div>
 					</transition>
@@ -33,7 +35,6 @@ export default {
         return{
 			donvicha:[],
 			donvicon:[],
-			test:"hoang van tu",
 			key:[],
         }
 	},
@@ -50,30 +51,71 @@ export default {
 		checkshow(key){
 			return this.key.includes(key);
 		},
-		emitData(){
+		emitData(data ,id){
+			this.changecheck();
+			if(data != undefined && id != undefined){
+				console.log(data);
+			}
+			// this.changecheckchild();
+			
 			var data = this.donvicha.concat(this.donvicon);
 			this.$emit('loadDonViNhan', data);
 		},
 		checkall(){
 			var check = document.getElementById(this.idtitle);
-			if(check.checked == true){
-				this.donvicha = this.lists.map(e=>{
-					return e.id;
-				})
-			}else{
-				this.donvicha = [];
+			if(check != undefined){
+				if(check.checked == true){
+					this.donvicha = this.lists.map(e=>{
+						return e.id;
+					})
+				}else{
+					this.donvicha = [];
+				}
+			}
+			this.emitData();
+		},
+		changecheck(){
+			var check = document.getElementById(this.idtitle);
+			if(check != undefined){
+				var length = this.donvicha.length;
+				var lengthlist = this.lists.length;
+				if(length == lengthlist){
+					check.checked = true;
+				}else{
+					check.checked = false;
+				}
 			}
 		},
-		checkallchild(){
-			var check = document.getElementById(this.idtitle);
-			if(check.checked == true){
-				this.donvicha = this.lists.map(e=>{
+		checkallchild(data, id){
+			var check = document.getElementById(id);
+			if(check != undefined){
+				let listId = data.map(e=>{
 					return e.id;
-				})
-			}else{
-				this.donvicha = [];
+				});
+				if(check.checked == true){
+					let dvchuatick = listId.filter(e=>{
+						return this.donvicon.includes(e) == false;
+					})
+					this.donvicon = this.donvicon.concat(dvchuatick);
+				}else{
+					this.donvicon = this.donvicon.filter(e=>{
+						return listId.includes(e) == false;
+					});
+				}
 			}
-		}
+			this.emitData();
+		},
+		changecheckchild(classname){
+			var check = document.getElementsByClassName(classname);
+			if(check != undefined){
+				for(let i = 1; i< check.length; i++){
+					if(check[i].checked == false){
+						return check[0].checked = false;
+					}
+				}
+				return check[0].checked = true;
+			}
+		},
     }
 }
 </script>
