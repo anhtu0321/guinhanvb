@@ -128,6 +128,9 @@ export default {
 			.then(res=>{
 				this.listData = res.data;
 			})
+			.catch(e=>{
+				this.loadData();
+			})
 		},
 		hideModal(){
 			this.modal = false;

@@ -15,10 +15,12 @@
 						</div>
 					</div>
 					<transition name="showdonvi">
-						<div class="item__children" v-if="checkshow(list.id)">
-							<input type="checkbox" @change="checkallchild(list.donvicon, list.id+'1')" :id="list.id+'1'"> <label :for="list.id+'1'"> Tất cả</label>
+						<div class="item__children" v-show="checkshow(list.id)">
+							<div class="children-checkall">
+								<input type="checkbox" @change="checkallchild(list.donvicon, list.id+'s')" :id="list.id+'s'"> <label :for="list.id+'s'"> Tất cả</label>
+							</div>
 							<div v-for="listc in list.donvicon" :key="listc.id" class="item__info">
-								<input type="checkbox" :value="listc.id" v-model="donvicon" @change="emitData(list.donvicon, list.id+'1')" :id="listc.id"> <label :for="listc.id"> {{ listc.ten_phong }}</label>
+								<input type="checkbox" :value="listc.id" v-model="donvicon" @change="emitData(list.donvicon, list.id+'s')" :id="listc.id"> <label :for="listc.id"> {{ listc.ten_phong }}</label>
 							</div>
 						</div>
 					</transition>
@@ -54,9 +56,9 @@ export default {
 		emitData(data ,id){
 			this.changecheck();
 			if(data != undefined && id != undefined){
-				console.log(data);
+				// console.log(data);
+				this.changecheckchild(data, id);
 			}
-			// this.changecheckchild();
 			
 			var data = this.donvicha.concat(this.donvicon);
 			this.$emit('loadDonViNhan', data);
@@ -105,15 +107,18 @@ export default {
 			}
 			this.emitData();
 		},
-		changecheckchild(classname){
-			var check = document.getElementsByClassName(classname);
+		changecheckchild(data, id){
+			var check = document.getElementById(id);
+			let listId = data.map(e=>{
+				return e.id;
+			});
 			if(check != undefined){
-				for(let i = 1; i< check.length; i++){
-					if(check[i].checked == false){
-						return check[0].checked = false;
+				for(let i = 0; i< listId.length; i++){
+					if(this.donvicon.includes(listId[i]) == false){
+						return check.checked = false;
 					}
 				}
-				return check[0].checked = true;
+				return check.checked = true;
 			}
 		},
     }
@@ -163,6 +168,15 @@ export default {
 	justify-content: space-evenly;
 	margin-left:10px;
 }
+.item__children .children-checkall{
+	display: flex;
+	justify-content: space-between;
+	color:rgb(3, 36, 184);
+	font-weight: bold;
+}
+.item__children .children-checkall input{
+	margin-right:5px;
+}
 .item__children .item__info{
 	margin-top:5px;
 	display:flex;
@@ -192,18 +206,9 @@ export default {
 }
 .item__info{
 	margin-left:10px;
-	/* font-size:1.1rem; */
-	/* font-weight: bold; */
-	/* color:#ffffff;
-	background: #00abe4; */
-	/* padding:5px 15px; */
-	/* border-radius:5px;
-	border:1px solid #dadada; */
 	position: relative;
 }
-.item__info:hover{
-	/* color:#fff9bd; */
-}
+
 .item__total{
 	position: absolute;
 	width:25px;

@@ -35,17 +35,20 @@ export default {
     methods:{
         show(menu){
             this.$store.dispatch('acMenu', menu);
+        },
+        loadData(){
+            axios.get('/guinhanvb/guinhantheodonvi')
+            .then(res=>{
+                this.id = res.data.id;
+                this.ten_phong = res.data.ten_phong;
+            })
+            .catch(e=>{
+                this.loadData();
+            })
         }
     },
     created(){
-        axios.get('/guinhanvb/guinhantheodonvi')
-        .then(res=>{
-            this.id = res.data.id;
-            this.ten_phong = res.data.ten_phong;
-        })
-        .catch(error=>{
-
-        })
+        this.loadData();
     },
     components:{guivanban, nhanvanban}
 }

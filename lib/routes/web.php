@@ -47,3 +47,5 @@ Route::post('/loginDonVi','loginController@logindonvi');
 
 // Tải dữ liệu sau khi login theo đơn vị
 Route::get('/guinhantheodonvi', 'guinhanController@loaddata');
+// Thực hiện gửi văn bản
+Route::post('/guivanban', 'guinhanController@guivanban');

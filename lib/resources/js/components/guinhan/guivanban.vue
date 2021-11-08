@@ -37,7 +37,7 @@
 						<div class="row mb-3">
 							<div class="col-md-4">
 								<label for="file" class="form-label col-3">File đính kèm</label>
-								<input type="file" class="form-control" id="file">
+								<input type="file" class="form-control" id="file" @change="getFile">
 							</div>
 						</div>
 						<div class="row mb-3">
@@ -140,6 +140,9 @@ export default {
 			.then(res=>{
 				this.listLoai = res.data;
 			})
+			.catch(e=>{
+				this.loadLoai;
+			})
 		},
 		checkbgd(){
 			var check = document.getElementById('bgd-check');
@@ -173,9 +176,27 @@ export default {
 		donvikh(data){
 			this.dvkh = data;
 		},
+		getFile(e){
+			if(e.target.files[0] != undefined){
+				this.file = e.target.files[0];
+			}else{
+				this.file = "";
+			}
+		},
 		guivanban(){
 			var donviall = this.donvinhan.concat(this.dvxdll, this.dvkan, this.dvkcs, this.dvkh);
-			console.log(donviall);
+			let data = new FormData;
+			data.append('loai', this.loai);
+			data.append('so', this.so);
+			data.append('domat', this.domat);
+			data.append('trichyeu', this.trichyeu);
+			data.append('file', this.file);
+			data.append('donvinhan', donviall);
+			axios.post('/guinhanvb/guivanban', data)
+			.then(res=>{
+				console.log(res);
+			})
+			.catch();
 		},
 	},
 	created(){
