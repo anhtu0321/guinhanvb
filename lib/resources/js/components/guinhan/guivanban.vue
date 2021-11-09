@@ -31,7 +31,9 @@
 						<div class="row mb-3">
 							<div class="col-md-12">
 								<label for="trichyeu" class="form-label col-3">Trích yếu</label>
-								<input type="text" class="form-control" id="trichyeu" v-model="trichyeu">
+								<!-- <input type="text" class="form-control" id="trichyeu" v-model="trichyeu"> -->
+								<input type="text" class="form-control" v-model="trichyeu" :class="{'is-invalid':(errors && errors.trich_yeu)}" @focus="removeErr">
+                            	<p class="thongbao" v-if="errors && errors.trich_yeu">{{ errors.trich_yeu[0] }}</p>
 							</div>
 						</div>
 						<div class="row mb-3">
@@ -95,6 +97,7 @@ export default {
 			ghichu:'',
 			listLoai:'',
 			listDataDonVi:[],
+			errors:'',
 		}
 	},
 	computed:{
@@ -188,16 +191,22 @@ export default {
 			let data = new FormData;
 			data.append('loai', this.loai);
 			data.append('so', this.so);
-			data.append('domat', this.domat);
-			data.append('trichyeu', this.trichyeu);
+			data.append('do_mat', this.domat);
+			data.append('trich_yeu', this.trichyeu);
 			data.append('file', this.file);
 			data.append('donvinhan', donviall);
 			axios.post('/guinhanvb/guivanban', data)
 			.then(res=>{
 				console.log(res);
 			})
-			.catch();
+			.catch(err=>{
+				this.errors = err.response.data.errors;
+				console.log(this.errors);
+			});
 		},
+		removeErr(){
+            this.errors ='';
+        },
 	},
 	created(){
 		this.loadLoai();
@@ -247,5 +256,19 @@ export default {
 }
 .item label{
 	cursor: pointer;
+}
+.thongbao{
+	font-family: Arial, Helvetica, sans-serif;
+	color:crimson;
+	font-size:0.8rem;
+	margin-top: 5px;
+}
+.is-invalid{
+	border-color: #dc3545;
+	padding-right: calc(1.5em + 0.75rem);
+	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+	background-repeat: no-repeat;
+	background-position: right calc(0.375em + 0.1875rem) center;
+	background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);                    
 }
 </style>
