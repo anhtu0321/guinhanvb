@@ -5,6 +5,8 @@ use App\traits\convertString;
 use Illuminate\Http\Request;
 use App\vanbangui;
 use App\vanbannhan;
+use App\kynhan;
+use DB;
 class guinhanController extends Controller
 {
     use convertString;
@@ -31,18 +33,44 @@ class guinhanController extends Controller
             $duoi_file = $tenduoi;
             $request->file->move($thumucluu, $tenfile);
         }
-        $vanbangui = new vanbangui;
-        $vanbangui->so = $request->so;
-        $vanbangui->id_loai_van_ban = $request->loai;
-        $vanbangui->do_mat = $request->do_mat;
-        $vanbangui->trich_yeu = $request->trich_yeu;
-        $vanbangui->don_vi_gui = $request->don_vi_gui;
-        $vanbangui->ghi_chu = $request->ghi_chu;
-        $vanbangui->ngay_nhap = date('d/m/Y');
-        $vanbangui->gio_nhap = date('H:i:s');
-        $vanbangui->save();
+                
+        try{
+            DB::beginTransaction();
+                $vanbangui = new vanbangui;
+                $vanbangui->so = $request->so;
+                $vanbangui->id_loai_van_ban = $request->loai;
+                $vanbangui->do_mat = $request->do_mat;
+                $vanbangui->trich_yeu = $request->trich_yeu;
+                $vanbangui->don_vi_gui = $request->session()->get('id');
+                $vanbangui->ghi_chu = $request->ghi_chu;
+                $vanbangui->file = $file_url;
+                $vanbangui->ngay_nhap = date('d/m/Y');
+                $vanbangui->gio_nhap = date('H:i:s');
+                $vanbangui->save();
+                
+                $vanbannhan = new vanbannhan;
+                $vanbannhan->so = $request->so;
+                $vanbannhan->id_loai_van_ban = $request->loai;
+                $vanbannhan->do_mat = $request->do_mat;
+                $vanbannhan->trich_yeu = $request->trich_yeu;
+                $vanbannhan->don_vi_gui = $request->session()->get('id');
+                $vanbannhan->ghi_chu = $request->ghi_chu;
+                $vanbannhan->file = $file_url;
+                $vanbannhan->ngay_nhap = date('d/m/Y');
+                $vanbannhan->gio_nhap = date('H:i:s');
+                $vanbannhan->save();
+                foreach($request->donvinhan as $key=>$value){
+                    DB::table('kynhan')->insert([
+                        'id_van_ban' => $vanbangui->id,
+                        'id_van_ban_nhan' => $vanbannhan->id,
+                        'id_don_vi' => $value,
+                    ]);
+                }
+            DB::commit();
+        }catch(\Exception $exception){
+            DB::rollback();
+        }
         
-
     }
     public function validateForm(Request $request){
         return $request->validate([

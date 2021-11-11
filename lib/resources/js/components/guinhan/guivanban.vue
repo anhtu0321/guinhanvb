@@ -144,7 +144,8 @@ export default {
 				this.listLoai = res.data;
 			})
 			.catch(e=>{
-				this.loadLoai;
+				this.loadLoai();
+				console.log('da loi load loai van ban');
 			})
 		},
 		checkbgd(){
@@ -194,7 +195,9 @@ export default {
 			data.append('do_mat', this.domat);
 			data.append('trich_yeu', this.trichyeu);
 			data.append('file', this.file);
-			data.append('donvinhan', donviall);
+			for(let i = 0;i< donviall.length;i++){
+				data.append('donvinhan[]', donviall[i]);
+			};
 			axios.post('/guinhanvb/guivanban', data)
 			.then(res=>{
 				console.log(res);

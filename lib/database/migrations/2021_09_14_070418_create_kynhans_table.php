@@ -18,12 +18,12 @@ class CreateKynhansTable extends Migration
             $table->integer('id_van_ban')->length(15);
             $table->integer('id_van_ban_nhan')->length(15);
             $table->integer('id_don_vi')->length(15);
-            $table->string('nguoi_nhan',100);
-            $table->string('sdt',50);
-            $table->string('ngay_nhan',50);
-            $table->string('gio_nhan',50);
-            $table->integer('ky_nhan')->length(2);
-            $table->integer('trang_thai')->length(2);
+            $table->string('nguoi_nhan',100)->nullable();
+            $table->string('sdt',50)->nullable();
+            $table->string('ngay_nhan',50)->nullable();
+            $table->string('gio_nhan',50)->nullable();
+            $table->integer('ky_nhan')->length(2)->nullable();
+            $table->integer('trang_thai')->length(2)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

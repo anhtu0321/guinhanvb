@@ -19,7 +19,8 @@ export default {
 		guinhanComponent,
 		footerComponent,
 	}
+	
 }
 </script>
 
-<style>
+

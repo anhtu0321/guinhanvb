@@ -44,7 +44,29 @@ class loginController extends Controller
         }else{
             return response()->json(['error'=>'Mật khẩu không đúng !'],401);
         }
-        
+    }
+    // logout don vi
+    public function logoutdonvi(Request $request){
+        $request->session()->forget('id');
+        $request->session()->forget('ten_phong');
+    }
+    // kiem tra xe co ton tai session don vi khong
+    public function checksession(Request $request){
+        if($request->session()->has('id')){
+            return response()->json(['thành công'=>'thành công !'],200);
+        }else{
+            return response()->json(['error'=>'Lỗi! Chưa đăng nhập !'],401);
+        }
+    }
+    // lấy giá trị session
+    public function getsession(Request $request){
+        $id="";
+        $ten_phong="";
+        if($request->session()->has('id') && $request->session()->has('ten_phong')){
+            $id = $request->session()->get('id');
+            $ten_phong = $request->session()->get('ten_phong');
+        }
+        return response()->json(['id'=>$id, 'ten_phong'=>$ten_phong], 200);
     }
 }
 

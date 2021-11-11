@@ -7,7 +7,7 @@
                     <li><a href="#" @click.prevent="show('gui')" :class="menu=='gui'? 'active':''">Gửi văn bản</a></li>
                     <li><a href="#" @click.prevent="show('nhan')" :class="menu=='nhan'? 'active':''">Nhận văn bản</a></li>
                     <li><a href="#">Đổi mật khẩu</a></li>
-                    <li><a href="#">Đăng xuất</a></li>
+                    <li><a href="#" @click.prevent="logout">Đăng xuất</a></li>
                 </ul>
             </div>
         </div>
@@ -45,9 +45,26 @@ export default {
             .catch(e=>{
                 this.loadData();
             })
-        }
+        }, 
+        logout(){
+            axios.get('/guinhanvb/logoutdonvi')
+            .then(e=>{
+                this.$router.push('/');
+            })
+            .catch()
+        },
+		checklogin(){
+			axios.get('/guinhanvb/checksession')
+			.then(e=>{
+	
+			})
+			.catch(e=>{
+				this.$router.push('/');
+			});
+		},
     },
     created(){
+        this.checklogin();
         this.loadData();
     },
     components:{guivanban, nhanvanban}

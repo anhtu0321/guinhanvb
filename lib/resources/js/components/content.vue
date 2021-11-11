@@ -136,11 +136,21 @@ export default {
 			this.modal = false;
 		},
 		showModal(ten_phong, id){
-			this.ten_phong = ten_phong.toUpperCase();
-			this.id = id;
-			this.error = '';
-			this.password='';
-			this.modal = true;
+			axios.get('/guinhanvb/getsession')
+			.then(res=>{
+				if(ten_phong == res.data.ten_phong && id == res.data.id){
+					this.$router.push('/guinhan');
+				}else{
+					this.ten_phong = ten_phong.toUpperCase();
+					this.id = id;
+					this.error = '';
+					this.password='';
+					this.modal = true;
+				}
+			})
+			.catch(e=>{
+				this.showModal();
+			})		
 		},
 		
 		keepModal(){

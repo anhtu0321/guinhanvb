@@ -44,7 +44,12 @@ Route::get('/deleteTaiKhoan/{id}','UserController@destroy')->middleware('can:tai
 // FRONTEND ********************************************************************************
 // login tai khoan cac don vi
 Route::post('/loginDonVi','loginController@logindonvi');
-
+// logout tai khoan cac don vi
+Route::get('/logoutdonvi','loginController@logoutdonvi');
+// Kiem tra xem co ton tai session khong
+Route::get('/checksession', 'loginController@checksession');
+// lấy giá trị session
+Route::get('/getsession', 'loginController@getsession');
 // Tải dữ liệu sau khi login theo đơn vị
 Route::get('/guinhantheodonvi', 'guinhanController@loaddata');
 // Thực hiện gửi văn bản
