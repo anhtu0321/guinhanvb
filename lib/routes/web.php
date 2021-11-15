@@ -54,3 +54,5 @@ Route::get('/getsession', 'loginController@getsession');
 Route::get('/guinhantheodonvi', 'guinhanController@loaddata');
 // Thực hiện gửi văn bản
 Route::post('/guivanban', 'guinhanController@guivanban');
+// api list van ban gui
+Route::get('/getListGui','guinhancontroller@listgui');

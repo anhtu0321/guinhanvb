@@ -61,7 +61,8 @@
 }
 html {
 	font-size: 14px;
-	font-family: 'Montserrat';
+  /* font-family: 'Montserrat'; */
+  font-family: Arial, Helvetica, sans-serif;
 	scroll-behavior: smooth;
 	min-height: 768px;
 }

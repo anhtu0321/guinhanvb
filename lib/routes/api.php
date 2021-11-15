@@ -29,3 +29,6 @@ Route::get('/listChucNangCha','PermissionController@listCha');
 Route::get('/listTaiKhoan','UserController@index');
 Route::get('/editTaiKhoan/{id}','UserController@edit');
 
+// ***************** SỬ DỤNG CHO FORNTEND **************
+
+

@@ -2,6 +2,7 @@
     <div id="gui">
         <div class="gui">
             <!-- <div class="search">Form tìm kiếm</div> -->
+			<!-- Form gửi văn bản -->
             <div class="form">
 				<div class="title">GỬI VĂN BẢN NỘI BỘ</div>
 				<div class="form__content">
@@ -44,21 +45,28 @@
 						</div>
 						<div class="row mb-3">
 							<div class="col-md-12">
-								<label for="donvinhan" class="form-label col-3">Đơn vị nhận</label>
-								<div class="khoi">
-									<div class="title-donvi"><input type="checkbox" id="bgd-check" @change="checkbgd"> <label for="bgd-check">Ban Giám đốc</label></div>
-									<div class="items">
-										<div class="item mb-3" v-for="list in bgd" :key="list.id">
-											<input type="checkbox" :value="list.id" v-model="donvinhan" :id="list.id" @change="changecheck"> <label :for="list.id">{{list.ten_phong}}</label> 
+								<label for="donvinhan" class="form-label col-3 label-donvinhan" @click="show=!show">Đơn vị nhận</label>
+								<span class="btn" @click="show=!show">
+									<i class="fas fa-caret-down" v-if="show==false"></i>
+									<i class="fas fa-caret-up" v-else></i>
+								</span>
+								<transition name="showdonvinhan">
+									<div class="donvinhan" v-show="show">
+										<div class="khoi">
+											<div class="title-donvi"><input type="checkbox" id="bgd-check" @change="checkbgd"> <label for="bgd-check">Ban Giám đốc</label></div>
+											<div class="items">
+												<div class="item mb-3" v-for="list in bgd" :key="list.id">
+													<input type="checkbox" :value="list.id" v-model="donvinhan" :id="list.id" @change="changecheck"> <label :for="list.id">{{list.ten_phong}}</label> 
+												</div>
+											</div>
 										</div>
+										<donvicheck :lists="xdll" :idtitle="'xdlltitle'" :title="'Khối Xây dựng lực lượng'" @loadDonViNhan="donvixdll" ></donvicheck>
+										<donvicheck :lists="kan" :idtitle="'kantitle'" :title="'Khối An ninh'" @loadDonViNhan="donvikan"></donvicheck>
+										<donvicheck :lists="kcs" :idtitle="'kcstitle'" :title="'Khối Cảnh sát'" @loadDonViNhan="donvikcs"></donvicheck>
+										<donvicheck :lists="kh" :idtitle="'khtitle'" :title="'Khối huyện, thị, thành'" @loadDonViNhan="donvikh"></donvicheck>
 									</div>
-								</div>
+								</transition>
 								
-								<donvicheck :lists="xdll" :idtitle="'xdlltitle'" :title="'Khối Xây dựng lực lượng'" @loadDonViNhan="donvixdll" ></donvicheck>
-								<donvicheck :lists="kan" :idtitle="'kantitle'" :title="'Khối An ninh'" @loadDonViNhan="donvikan"></donvicheck>
-								<donvicheck :lists="kcs" :idtitle="'kcstitle'" :title="'Khối Cảnh sát'" @loadDonViNhan="donvikcs"></donvicheck>
-								<donvicheck :lists="kh" :idtitle="'khtitle'" :title="'Khối huyện, thị, thành'" @loadDonViNhan="donvikh"></donvicheck>
-									
 							</div>
 						</div>
 						<div class="row mb-3">
@@ -75,12 +83,49 @@
 					</form>
 				</div>
             </div>
+			<!-- Danh sách văn bản gửi -->
+			<div class="title">DANH SÁCH VĂN BẢN GỬI</div>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+						<th scope="col">#</th>
+						<th scope="col">Số văn bản</th>
+						<th scope="col">Trích yếu</th>
+						<th scope="col">Đơn vị nhận</th>
+						<th scope="col"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(list,index) in lists" :key="list.id">
+							<th scope="row">{{index + 1}}</th>
+							<td>{{list.so}}</td>
+							<td>{{list.trich_yeu}}</td>
+							<td 
+								v-html="hien5DonVi(list.donvis)" 
+								@mouseover="showNoiDungAn('noidungan'+list.id)" 
+								@mouseout="hideNoiDungAn('noidungan'+list.id)" 
+								@click="showKyNhan(list.donvis)"
+								style="cursor:pointer; font-weight:bold;">
+							</td>
+							<td></td>
+							<div class="noidungan" :id="'noidungan'+list.id" v-html="hienTatDonVi(list.donvis)"></div>
+						</tr>
+					</tbody>
+				</table>
+				<!-- phân trang ở dưới -->
+				
+					<ul class="pagination justify-content-end">
+						<li class="page-item" @click.prevent="prev()"><a class="page-link" href="#">Previous</a></li>
+						<li class="page-item" :class="{'active': currentPage==page}" @click.prevent="setPage(page)" v-for="page in pagesNumber" :key="page"><a class="page-link" href="#">{{ page }}</a></li>
+						<li class="page-item" @click.prevent="next()"><a class="page-link" href="#">Next</a></li>
+					</ul>
+		
         </div>
     </div>
 </template>
 
 <script>
-import donvicheck from './donvicheck.vue';
+import donvicheck from './gui/donvicheck.vue';
 export default {
 	data(){
 		return{
@@ -98,6 +143,14 @@ export default {
 			listLoai:'',
 			listDataDonVi:[],
 			errors:'',
+			show:false, //dùng để ẩn hiện đơn vị nhận
+			lists:'', //dữ liệu danh sách văn bản gửi
+			//data for page
+			last_pages:'',
+			currentPage: 1,
+			offset: 4,
+			from:1,
+			to:1,
 		}
 	},
 	computed:{
@@ -125,7 +178,36 @@ export default {
 			return this.listDataDonVi.filter(function(e){
 				return e.khoi == 5;
 			});
-		}  
+		},
+		// xử lý mảng số trang
+		pagesNumber() {
+				if(this.last_pages == null){return [];}
+				if(this.last_pages<=this.offset*2+1){
+					this.from = 1;
+					this.to = this.last_pages;
+				}else{
+					if(this.currentPage <= this.offset){
+						this.from = 1;
+						this.to = 1 + this.offset*2;
+						if(this.to > this.last_pages){
+							this.to = this.last_pages;
+						}
+					}
+					if((this.currentPage> this.offset) && (this.currentPage <= this.last_pages - this.offset)){
+						this.from = this.currentPage - this.offset;
+						this.to = this.currentPage + this.offset;
+					}
+					if(this.currentPage >this.last_pages - this.offset){
+						this.from = this.last_pages - this.offset*2;
+						this.to = this.last_pages;
+					}
+				}
+                var pagesArray = [];
+                for (var i=this.from; i <= this.to; i++) {
+                    pagesArray.push(i);
+                }
+                return pagesArray;
+            },
 	},
 	methods:{
 		loadData(){
@@ -135,7 +217,7 @@ export default {
 			})
 			.catch( e=>{
 				this.loadData();
-				console.log('da loi');
+				console.log('da loi load data');
 			})
 		},
 		loadLoai(){
@@ -146,6 +228,17 @@ export default {
 			.catch(e=>{
 				this.loadLoai();
 				console.log('da loi load loai van ban');
+			})
+		},
+		loadList(page){
+			axios.get('/guinhanvb/getListGui?page='+page)
+			.then(res=>{
+				this.lists = res.data.data;
+				this.last_pages = res.data.last_page;
+			})
+			.catch(e=>{
+				this.loadList();
+				console.log('da loi load van ban gui');
 			})
 		},
 		checkbgd(){
@@ -187,6 +280,7 @@ export default {
 				this.file = "";
 			}
 		},
+		//Khi click nút gửi
 		guivanban(){
 			var donviall = this.donvinhan.concat(this.dvxdll, this.dvkan, this.dvkcs, this.dvkh);
 			let data = new FormData;
@@ -209,11 +303,83 @@ export default {
 		},
 		removeErr(){
             this.errors ='';
-        },
+		},
+		// Xử lý danh sách văn bản gửi
+		hien5DonVi(data){
+			var str = '';
+			var soDonVi = 0;
+			var duoi = '';
+			if(data.length <= 5){
+				soDonVi = data.length;
+			}else{
+				soDonVi = 5;
+				duoi = '...'
+			}
+			for(let i = 0; i<soDonVi; i++){
+				let phancach = '';
+				if(i == soDonVi-1){phancach = '.';}else{phancach =',';}
+				if(data[i].ky_nhan == '1'){
+					str += ' '+'<span style="color:green">'+data[i].ky_hieu + phancach +'</span>';
+				}else{
+					str += ' '+'<span style="color:red">'+data[i].ky_hieu + phancach +'</span>';
+				}
+			}
+			return str+' '+duoi;
+		},
+		hienTatDonVi(data){
+			var str = '';
+			
+			for(let i = 0; i<data.length; i++){
+				let phancach = '';
+				if(i == data.length-1){phancach = '.';}else{phancach =',';}
+				if(data[i].ky_nhan == '1'){
+					str += ' '+'<span style="color:green">'+data[i].ky_hieu + phancach +'</span>';
+				}else{
+					str += ' '+'<span style="color:red">'+data[i].ky_hieu + phancach +'</span>';
+				}
+			}
+			return str;
+		},
+		showNoiDungAn(id){
+			var ele = document.getElementById(id);
+			ele.style.display = "block";
+			function move(e){	
+				let x = (window.Event) ? e.pageX : event.clientX + (document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft);
+				let y = (window.Event) ? e.pageY : event.clientY + (document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop);
+				ele.style.left=(x+20)+"px";
+				ele.style.top= (y)+"px";
+			}
+			document.onmousemove=move;
+		},
+		hideNoiDungAn(id){
+			document.getElementById(id).style.display = 'none';
+		},
+		// click để hiện thông tin người ký
+		showKyNhan(data){
+			console.log(data);
+		},
+		// Xử lý khi click vào nút trang
+		setPage(newPage){
+			this.currentPage = newPage;
+			this.loadList(this.currentPage);
+		},
+		prev(){
+			if(this.currentPage > 1){
+				this.currentPage--;
+				this.loadList(this.currentPage);
+			}
+		},
+		next(){
+			if(this.currentPage < this.last_pages){
+				this.currentPage++;
+				this.loadList(this.currentPage);
+			}
+		}
 	},
 	created(){
 		this.loadLoai();
 		this.loadData();
+		this.loadList();
 	},
 	components:{donvicheck}
 }
@@ -229,7 +395,7 @@ export default {
 	padding:0 30px;
 }
 .title{
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: 'Montserrat';
 	font-size:1.3rem;
 	padding:10px 0;
 }
@@ -273,5 +439,34 @@ export default {
 	background-repeat: no-repeat;
 	background-position: right calc(0.375em + 0.1875rem) center;
 	background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);                    
+}
+.showdonvinhan-enter-active, .showdonvinhan-leave-active {
+  transition: opacity .7s;
+}
+.showdonvinhan-enter, .showdonvinhan-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+.label-donvinhan{
+	cursor: pointer;
+}
+.label-donvinhan:hover{
+	color:brown;
+	font-weight: bold;
+}
+.pagination{
+	display: flex;
+	justify-content: end;
+	margin-bottom:50px;
+}
+.noidungan{
+	display: none;
+	position:absolute;
+	width:300px;
+	overflow: hidden;
+	background:white;
+	box-shadow: 1px 2px 6px rgb(122, 121, 121);
+	padding: 10px;
+	border-radius: 3px;
+	font-weight: bold;
 }
 </style>

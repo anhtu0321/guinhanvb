@@ -45,7 +45,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- test thử modal -->
 
 		<!-- Modal -->
 		<div class="modal" v-show="modal" @click="hideModal()">
@@ -189,6 +188,7 @@ export default {
 	width:100%;
 	min-height:800px;
 	margin-bottom:50px;
+	font-family: 'Montserrat';
 }
 #content .content{
 	max-width: 1390px;

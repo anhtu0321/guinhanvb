@@ -18,8 +18,21 @@ export default {
 		bannerComponent,
 		guinhanComponent,
 		footerComponent,
-	}
+	},
+	methods:{
+		checklogin(){
+			axios.get('/guinhanvb/checksession')
+			.then(e=>{
 	
+			})
+			.catch(e=>{
+				this.$router.push('/');
+			});
+		},
+	},
+	created(){
+		this.checklogin();
+	}
 }
 </script>
 

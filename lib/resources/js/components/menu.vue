@@ -41,10 +41,12 @@ export default {
 	top:0;
 	overflow: hidden;
 	z-index:99;
+	box-shadow: 1px 2px 5px #838383;
 }
 #menu{
 	width:100%;
 	background:#f7f8fa;
+	font-family: 'Montserrat';
 }
 .menu{
 	max-width:1390px;

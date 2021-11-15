@@ -41,6 +41,7 @@ export default {
   height:90px;
   padding:0;
   margin:0;
+  font-family: 'Montserrat';
 }
 .header{
 	width:100%;

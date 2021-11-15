@@ -13,6 +13,7 @@ export default {
 <style scoped>
 #banner{
 	width:100%;
+	font-family: 'Montserrat';
 }
 #banner img{
 	width:100%;

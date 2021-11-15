@@ -30,6 +30,7 @@ export default {
 	width:100%;
 	min-height:200px;
 	background:#24272e;
+	font-family: 'Montserrat';
 }
 .footer{
 	max-width: 1390px;

@@ -72,6 +72,14 @@ class guinhanController extends Controller
         }
         
     }
+    // danh sách văn bản gửi
+    public function listgui(Request $request){
+        $data = vanbangui::with('donvis')
+                    ->where('don_vi_gui', $request->session()->get('id'))
+                    ->orderBy('id','desc')
+                    ->paginate(10);
+        return $data;
+    }
     public function validateForm(Request $request){
         return $request->validate([
             'trich_yeu' => 'required',

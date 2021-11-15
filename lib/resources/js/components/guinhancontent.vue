@@ -40,7 +40,7 @@ export default {
             axios.get('/guinhanvb/guinhantheodonvi')
             .then(res=>{
                 this.id = res.data.id;
-                this.ten_phong = res.data.ten_phong;
+                this.ten_phong = res.data.ten_phong.toUpperCase();
             })
             .catch(e=>{
                 this.loadData();
@@ -53,18 +53,8 @@ export default {
             })
             .catch()
         },
-		checklogin(){
-			axios.get('/guinhanvb/checksession')
-			.then(e=>{
-	
-			})
-			.catch(e=>{
-				this.$router.push('/');
-			});
-		},
     },
     created(){
-        this.checklogin();
         this.loadData();
     },
     components:{guivanban, nhanvanban}
@@ -74,9 +64,10 @@ export default {
 <style scoped>
 #guinhan{
     width:100%;
-	background:#f7f8fa;
+    background:#f7f8fa;
 }
 .guinhan{
+    font-family: 'Montserrat';
     max-width:1390px;
 	margin:0 auto;
 	padding:0 30px;
