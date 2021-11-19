@@ -31,7 +31,7 @@
 				</table>
 			</div>
 			<div class="form">
-				<form method="post" action="">
+				<form method="post" @submit.prevent="kynhan">
 					<div class="row mb-3">
 						<div class="col-md-5">
 							<label for="hoten" class="form-label">Họ tên</label>
@@ -100,6 +100,9 @@ export default {
 				this.check = false;
 				this.vanbannhan = [];
 			}
+		},
+		kynhan(){
+			
 		}
 	},
 	created(){
