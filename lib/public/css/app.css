@@ -105,6 +105,7 @@ label {
     padding: 0.75rem;
     vertical-align: top;
     border-top: 1px solid #dee2e6;
+    text-align: left;
 }
 
 .table thead th {
@@ -117,7 +118,7 @@ label {
 }
 
 .table-hover tbody tr:hover {
-    color: #212529;
+    /* color: #212529; */
     background-color: rgba(0, 0, 0, 0.075);
 }
 

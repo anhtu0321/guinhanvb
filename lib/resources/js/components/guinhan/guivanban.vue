@@ -100,14 +100,13 @@
 							<th scope="row">{{index + 1}}</th>
 							<td>{{list.so}}</td>
 							<td>{{list.trich_yeu}}</td>
-							<td 
-								v-html="hien5DonVi(list.donvis)" 
+							<td v-html="hien5DonVi(list.donvis)" 
 								@mouseover="showNoiDungAn('noidungan'+list.id)" 
 								@mouseout="hideNoiDungAn('noidungan'+list.id)" 
 								@click="showKyNhan(list.donvis)"
 								style="cursor:pointer; font-weight:bold;">
 							</td>
-							<td></td>
+							<td><i class="far fa-trash-alt btn-del" @click="delVanBan(list.id)"></i></td>
 							<div class="noidungan" :id="'noidungan'+list.id" v-html="hienTatDonVi(list.donvis)"></div>
 						</tr>
 					</tbody>
@@ -121,6 +120,44 @@
 					</ul>
 		
         </div>
+		<!-- Modal -->
+		<div class="modal" v-show="modal" @click="hideModal()">
+			<div class="modal-dialog" @click="function(event){event.stopPropagation();}">
+				<div class="btn-close" @click="hideModal()">
+					<i class="fas fa-times"></i>
+				</div>
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">DANH SÁCH KÝ NHẬN CÁC ĐƠN VỊ</h5>
+					</div>
+					<div class="modal-body">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th scope="col">#</th>
+									<th scope="col">Đơn vị</th>
+									<th scope="col">Họ tên</th>
+									<th scope="col">Số điện thoại</th>
+									<th scope="col">Ngày nhận</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(list,index) in kyNhanInfo" :key="list.id" :class="list.ky_nhan == '1'?'green':'red'">
+									<th scope="row">{{index + 1}}</th>
+									<td>{{list.ky_hieu}}</td>
+									<td>{{list.ho_ten}}</td>
+									<td>{{list.sdt}}</td>
+									<td>{{list.ngay_nhan}}{{list.gio_nhan}}</td> 
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" @click="hideModal()">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
     </div>
 </template>
 
@@ -145,6 +182,8 @@ export default {
 			errors:'',
 			show:false, //dùng để ẩn hiện đơn vị nhận
 			lists:'', //dữ liệu danh sách văn bản gửi
+			kyNhanInfo:'',// thông tin người ký nhận
+			modal: false,// dùng để ẩn hiện modal người ký nhận
 			//data for page
 			last_pages:'',
 			currentPage: 1,
@@ -181,33 +220,33 @@ export default {
 		},
 		// xử lý mảng số trang
 		pagesNumber() {
-				if(this.last_pages == null){return [];}
-				if(this.last_pages<=this.offset*2+1){
+			if(this.last_pages == null){return [];}
+			if(this.last_pages<=this.offset*2+1){
+				this.from = 1;
+				this.to = this.last_pages;
+			}else{
+				if(this.currentPage <= this.offset){
 					this.from = 1;
-					this.to = this.last_pages;
-				}else{
-					if(this.currentPage <= this.offset){
-						this.from = 1;
-						this.to = 1 + this.offset*2;
-						if(this.to > this.last_pages){
-							this.to = this.last_pages;
-						}
-					}
-					if((this.currentPage> this.offset) && (this.currentPage <= this.last_pages - this.offset)){
-						this.from = this.currentPage - this.offset;
-						this.to = this.currentPage + this.offset;
-					}
-					if(this.currentPage >this.last_pages - this.offset){
-						this.from = this.last_pages - this.offset*2;
+					this.to = 1 + this.offset*2;
+					if(this.to > this.last_pages){
 						this.to = this.last_pages;
 					}
 				}
-                var pagesArray = [];
-                for (var i=this.from; i <= this.to; i++) {
-                    pagesArray.push(i);
-                }
-                return pagesArray;
-            },
+				if((this.currentPage> this.offset) && (this.currentPage <= this.last_pages - this.offset)){
+					this.from = this.currentPage - this.offset;
+					this.to = this.currentPage + this.offset;
+				}
+				if(this.currentPage >this.last_pages - this.offset){
+					this.from = this.last_pages - this.offset*2;
+					this.to = this.last_pages;
+				}
+			}
+			var pagesArray = [];
+			for (var i=this.from; i <= this.to; i++) {
+				pagesArray.push(i);
+			}
+			return pagesArray;
+		},
 	},
 	methods:{
 		loadData(){
@@ -294,11 +333,35 @@ export default {
 			};
 			axios.post('/guinhanvb/guivanban', data)
 			.then(res=>{
-				console.log(res);
+				this.loadList(this.currentPage);
+				swal("Thành công !", "Văn bản đã được gửi !", "success");
 			})
 			.catch(err=>{
 				this.errors = err.response.data.errors;
-				console.log(this.errors);
+			});
+		},
+		delVanBan(id){
+			swal({
+				title: "XÓA VĂN BẢN ?",
+				text: "Văn bản đã xóa sẽ không thể khôi phục lại !",
+				icon: "warning",
+				buttons: true,
+				dangerMode: true,
+				})
+				.then((willDelete) => {
+				if (willDelete) {
+					axios.get('/guinhanvb/delVanBanGui/'+id)
+					.then(res=>{
+						swal("Văn bản đã bị xóa!", {
+							icon: "success",
+						});
+						this.loadList(this.currentPage);
+					})
+					.catch()
+					
+				} else {
+					swal("Đã hủy xóa văn bản!");
+				}
 			});
 		},
 		removeErr(){
@@ -356,7 +419,11 @@ export default {
 		},
 		// click để hiện thông tin người ký
 		showKyNhan(data){
-			console.log(data);
+			this.modal = true;
+			this.kyNhanInfo = data;
+		},
+		hideModal(){
+			this.modal = false;
 		},
 		// Xử lý khi click vào nút trang
 		setPage(newPage){
@@ -426,19 +493,12 @@ export default {
 .item label{
 	cursor: pointer;
 }
-.thongbao{
-	font-family: Arial, Helvetica, sans-serif;
-	color:crimson;
-	font-size:0.8rem;
-	margin-top: 5px;
+.btn-del{
+	padding:3px;
 }
-.is-invalid{
-	border-color: #dc3545;
-	padding-right: calc(1.5em + 0.75rem);
-	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
-	background-repeat: no-repeat;
-	background-position: right calc(0.375em + 0.1875rem) center;
-	background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);                    
+.btn-del:hover{
+	color:rgb(90, 11, 1);
+	cursor: pointer;
 }
 .showdonvinhan-enter-active, .showdonvinhan-leave-active {
   transition: opacity .7s;
@@ -468,5 +528,100 @@ export default {
 	padding: 10px;
 	border-radius: 3px;
 	font-weight: bold;
+}
+/* css cho modal */
+.modal {
+	font-family: Arial, Helvetica, sans-serif;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1055;
+	width: 100%;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	outline: 0;
+	background: rgba(0, 0, 0, 0.4);
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+}
+.modal-dialog {
+  	position: relative;
+	width:700px;
+	max-width:calc(100% - 50px);
+	background: #ffffff;
+	/* margin-top:-10%; */
+	top:100px;
+	border-radius:calc(0.5rem - 1px);
+	box-shadow: 1px 2px 5px #3f3f3f;
+	animation: modalFadeIn ease .5s;
+}
+ .modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 1rem;
+	border-bottom: 1px solid #dee2e6;
+	border-top-left-radius: calc(0.5rem - 1px);
+	border-top-right-radius: calc(0.5rem - 1px);
+	background: #017bcc;
+}
+.modal-dialog .btn-close {
+	position: absolute;
+	right: 0.5rem;
+	top: 0.5rem;
+	padding: 0.5rem 0.5rem;
+	margin: -0.5rem -0.5rem -0.5rem auto;
+	cursor: pointer;
+	color: rgb(255, 255, 255);
+}
+.modal-title {
+	margin-bottom: 0;
+	line-height: 1.5;
+	color:#ffffff;
+	font-size: 1.3rem;
+	text-align: center;
+	font-weight: 500;
+}
+.modal-body {
+	position: relative;
+	padding: 1.75rem 1rem;
+	max-height:800px;
+	overflow: scroll;
+}
+.green{
+	color:green;
+}
+.red{
+	color:red;
+}
+.form-group .btn{
+	width:100%;
+	margin-top:5px;
+}
+.modal-footer {
+	display: flex;
+	flex-wrap: wrap;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 0.75rem;
+	border-top: 1px solid #dee2e6;
+	border-bottom-right-radius: calc(0.3rem - 1px);
+	border-bottom-left-radius: calc(0.3rem - 1px);
+}
+.modal-footer > * {
+  	margin: 0.25rem;
+} 
+@keyframes modalFadeIn{
+	from{
+		opacity: 0;
+		transform: translateY(-100px);
+	}
+	to{
+		opacity:1;
+		transform: translateY(0px);
+	}
 }
 </style>

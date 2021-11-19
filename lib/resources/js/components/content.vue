@@ -115,7 +115,7 @@ export default {
 				return e.khoi == 4;
 			});
 		},
-		kh	(){
+		kh(){
 			return this.listData.filter(function(e){
 				return e.khoi == 5;
 			});

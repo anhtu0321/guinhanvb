@@ -80,6 +80,23 @@ class guinhanController extends Controller
                     ->paginate(10);
         return $data;
     }
+    // xóa văn bản gửi
+    public function delvanban($id){
+        vanbangui::destroy($id);
+    }
+    // danh sách văn bản nhận
+    public function listnhan(Request $request){
+        $data = kynhan::with('vanbannhans')
+                    ->where('id_don_vi', $request->session()->get('id'))
+                    ->orderBy('id','desc')
+                    ->paginate(10);
+        return $data;
+    }
+
+
+
+
+
     public function validateForm(Request $request){
         return $request->validate([
             'trich_yeu' => 'required',
@@ -91,5 +108,6 @@ class guinhanController extends Controller
             'trich_yeu' => 'Trích yếu',
         ]);
     }
+
 
 }
