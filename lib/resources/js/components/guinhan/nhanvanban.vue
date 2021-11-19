@@ -13,11 +13,11 @@
 							<th>Trích yếu</th>
 							<th>Ghi chú</th>
 							<th>File</th>
-							<th><input type="checkbox" @change="check = !check"></th>
+							<th><input type="checkbox" @change="checkAll"></th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="(list, index) in this.chuanhan" :key="list.id">
+						<tr v-for="(list, index) in this.chuaNhan" :key="list.id">
 							<td>{{index + 1}}</td>
 							<td>{{list.vanbannhans.don_vi_gui}}</td>
 							<td>{{list.vanbannhans.so}}</td>
@@ -25,7 +25,7 @@
 							<td>{{list.vanbannhans.trich_yeu}}</td>
 							<td>{{list.vanbannhans.ghi_chu}}</td>
 							<td>{{list.vanbannhans.file}}</td>
-							<td><input type="checkbox" v-mode="vanbannhan"></td>
+							<td><input type="checkbox" :value="list.id" v-model="vanbannhan"></td>
 						</tr>
 					</tbody>
 				</table>
@@ -35,11 +35,11 @@
 					<div class="row mb-3">
 						<div class="col-md-5">
 							<label for="hoten" class="form-label">Họ tên</label>
-							<input id="hoten" class="form-control" type="text" name="">
+							<input id="hoten" class="form-control" type="text" v-model="hoten">
 						</div>
 						<div class="col-md-5">
 							<label for="sdt" class="form-label">Số điện thoại</label>
-							<input id="sdt" class="form-control" type="text" name="">
+							<input id="sdt" class="form-control" type="text" v-model="sdt">
 						</div>
 						<div class="col-md-2">
 							<button class="btn btn-primary mt-4" style="width:100%;" type="button">Ký nhận</button>
@@ -60,21 +60,27 @@ export default {
 		return{
 			listNhan:[],
 			vanbannhan:[],
+			hoten:'',
+			sdt:'',
 			check:false,
 		}
 	},
 	computed:{
-		chuanhan(){
-			// console.log(this.listNhan);
+		chuaNhan(){
 			return this.listNhan.filter(function(e){
 				return e.ky_nhan == null;
 			});
 		},
-		danhan(){
+		daNhan(){
 			return this.listNhan.filter(e=>{
 				return e.ky_nhan == '1';
 			});
-		}
+		},
+		donViNhan(){
+			return this.listNhan.map(function(e){
+				return e.id;
+			});
+		},
 	},
 	methods:{
 		listVanBanNhan(){
@@ -83,9 +89,18 @@ export default {
 				this.listNhan = res.data.data;
 			})
 			.catch(e=>{
-				this.listVanBanNhan;
+				this.listVanBanNhan();
 			})
 		},
+		checkAll(){
+			if(this.check == false){
+				this.check = true;
+				this.vanbannhan = this.donViNhan;
+			}else{
+				this.check = false;
+				this.vanbannhan = [];
+			}
+		}
 	},
 	created(){
 		this.listVanBanNhan();
