@@ -92,10 +92,18 @@ class guinhanController extends Controller
                     ->paginate(10);
         return $data;
     }
-
-
-
-
+    // Ký nhận văn bản
+    public function kynhan(Request $request){
+        foreach($request->vanbannhan as $key => $value){
+            DB::table('kynhan')
+            ->where('id', $value)
+            ->update([
+                'nguoi_nhan' => $request->hoten,
+                'sdt' => $request->sdt,
+                'ky_nhan' => '1'
+            ]);
+        };
+    }
 
     public function validateForm(Request $request){
         return $request->validate([
@@ -108,6 +116,5 @@ class guinhanController extends Controller
             'trich_yeu' => 'Trích yếu',
         ]);
     }
-
 
 }

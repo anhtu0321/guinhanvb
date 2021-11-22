@@ -145,7 +145,7 @@
 								<tr v-for="(list,index) in kyNhanInfo" :key="list.id" :class="list.ky_nhan == '1'?'green':'red'">
 									<th scope="row">{{index + 1}}</th>
 									<td>{{list.ky_hieu}}</td>
-									<td>{{list.ho_ten}}</td>
+									<td>{{list.nguoi_nhan}}</td>
 									<td>{{list.sdt}}</td>
 									<td>{{list.ngay_nhan}}{{list.gio_nhan}}</td> 
 								</tr>

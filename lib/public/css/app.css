@@ -65,6 +65,10 @@
     border-color: #51585e;
 }
 
+input[type=checkbox] {
+    cursor: pointer;
+}
+
 .text-center {
     text-align: center;
 }
