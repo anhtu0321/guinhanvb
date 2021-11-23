@@ -10,4 +10,5 @@ class kynhan extends Model
     public function vanbannhans(){
         return $this->belongsTo('App\vanbannhan','id_van_ban_nhan');
     }
+    
 }

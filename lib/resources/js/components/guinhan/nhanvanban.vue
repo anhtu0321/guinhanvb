@@ -17,14 +17,14 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="(list, index) in this.chuaNhan" :key="list.id" >
+						<tr v-for="(list, index) in this.listChuaNhan" :key="list.id" >
 							<td>{{index + 1}}</td>
-							<td>{{list.vanbannhans.don_vi_gui}}</td>
-							<td>{{list.vanbannhans.so}}</td>
-							<td>{{list.vanbannhans.do_mat}}</td>
-							<td>{{list.vanbannhans.trich_yeu}}</td>
-							<td>{{list.vanbannhans.ghi_chu}}</td>
-							<td>{{list.vanbannhans.file}}</td>
+							<td>{{list.ky_hieu}}</td>
+							<td>{{list.so}}</td>
+							<td>{{list.do_mat}}</td>
+							<td>{{list.trich_yeu}}</td>
+							<td>{{list.ghi_chu}}</td>
+							<td>{{list.file}}</td>
 							<td><input type="checkbox" :value="list.id" v-model="vanbannhan"></td>
 						</tr>
 					</tbody>
@@ -63,14 +63,14 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="(list, index) in this.daNhan" :key="list.id" >
+						<tr v-for="(list, index) in this.listNhan" :key="list.id" >
 							<td>{{index + 1}}</td>
-							<td>{{list.vanbannhans.don_vi_gui}}</td>
-							<td>{{list.vanbannhans.so}}</td>
-							<td>{{list.vanbannhans.do_mat}}</td>
-							<td>{{list.vanbannhans.trich_yeu}}</td>
-							<td>{{list.vanbannhans.ghi_chu}}</td>
-							<td>{{list.vanbannhans.file}}</td>
+							<td>{{list.ky_hieu}}</td>
+							<td>{{list.so}}</td>
+							<td>{{list.do_mat}}</td>
+							<td>{{list.trich_yeu}}</td>
+							<td>{{list.ghi_chu}}</td>
+							<td>{{list.file}}</td>
 							<td><input type="checkbox" :value="list.id" v-model="vanbannhan"></td>
 						</tr>
 					</tbody>
@@ -85,6 +85,7 @@ export default {
 	data(){
 		return{
 			listNhan:[],
+			listChuaNhan:[],
 			vanbannhan:[],
 			hoten:'',
 			sdt:'',
@@ -92,16 +93,6 @@ export default {
 		}
 	},
 	computed:{
-		chuaNhan(){
-			return this.listNhan.filter(function(e){
-				return (e.ky_nhan == null && e.vanbannhans != undefined);
-			});
-		},
-		daNhan(){
-			return this.listNhan.filter(e=>{
-				return e.ky_nhan == '1';
-			});
-		},
 		vanBanAll(){
 			return this.listNhan.map(function(e){
 				return e.id;
@@ -116,6 +107,15 @@ export default {
 			})
 			.catch(e=>{
 				this.listVanBanNhan();
+			})
+		},
+		listVanBanChuaNhan(){
+			axios.get('/guinhanvb/getListChuaNhan')
+			.then(res=>{
+				this.listChuaNhan = res.data;
+			})
+			.catch(e=>{
+				this.listVanBanChuaNhan();
 			})
 		},
 		checkAll(){
@@ -141,6 +141,7 @@ export default {
 	},
 	created(){
 		this.listVanBanNhan();
+		this.listVanBanChuaNhan();
 	}
 }
 </script>

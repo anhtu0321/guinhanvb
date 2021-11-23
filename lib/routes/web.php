@@ -58,7 +58,9 @@ Route::post('/guivanban', 'guinhanController@guivanban');
 Route::get('/delVanBanGui/{id}', 'guinhanController@delvanban');
 // api list van ban gui
 Route::get('/getListGui','guinhancontroller@listgui');
-// api list van ban nhận
-Route::get('/getListNhan','guinhancontroller@listnhan');
+// api list van ban đã nhận
+Route::get('/getListNhan','guinhancontroller@listdanhan');
+// api list van ban chưa nhận
+Route::get('/getListChuaNhan','guinhancontroller@listchuanhan');
 // Ký nhận văn bản
 Route::post('/kynhan', 'guinhancontroller@kynhan');

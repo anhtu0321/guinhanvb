@@ -84,12 +84,27 @@ class guinhanController extends Controller
     public function delvanban($id){
         vanbangui::destroy($id);
     }
-    // danh sách văn bản nhận
-    public function listnhan(Request $request){
-        $data = kynhan::with('vanbannhans')
-                    ->where('id_don_vi', $request->session()->get('id'))
-                    ->orderBy('id','desc')
-                    ->paginate(10);
+    // danh sách văn bản đã nhận
+    public function listdanhan(Request $request){
+        $data = DB::table('kynhan')
+                ->join('vanbannhan','kynhan.id_van_ban_nhan','=','vanbannhan.id')
+                ->join('donvi','vanbannhan.don_vi_gui','=','donvi.id')
+                ->select('kynhan.*','donvi.ky_hieu','vanbannhan.*')
+                ->where('kynhan.id_don_vi','=',$request->session()->get('id'))
+                ->where('kynhan.ky_nhan','=','1')
+                ->where('kynhan.trang_thai','=',null)
+                ->paginate(20);
+        return $data;
+    }
+    // danh sách văn bản chưa nhận
+    public function listchuanhan(Request $request){
+        $data = DB::table('kynhan')
+                ->join('vanbannhan','kynhan.id_van_ban_nhan','=','vanbannhan.id')
+                ->join('donvi','vanbannhan.don_vi_gui','=','donvi.id')
+                ->select('kynhan.*','donvi.ky_hieu','vanbannhan.*')
+                ->where('kynhan.id_don_vi','=',$request->session()->get('id'))
+                ->where('kynhan.ky_nhan','=',null)
+                ->get();
         return $data;
     }
     // Ký nhận văn bản
