@@ -72,7 +72,7 @@
 						<div class="row mb-3">
 							<div class="col-md-12">
 								<label for="ghichu" class="form-label col-3">Ghi chú</label>
-								<input type="email" class="form-control" id="ghichu" v-model="ghichu">
+								<input type="text" class="form-control" id="ghichu" v-model="ghichu">
 							</div>
 						</div>
 						<div class="row mb-3">
@@ -327,6 +327,7 @@ export default {
 			data.append('so', this.so);
 			data.append('do_mat', this.domat);
 			data.append('trich_yeu', this.trichyeu);
+			data.append('ghi_chu', this.ghichu);
 			data.append('file', this.file);
 			for(let i = 0;i< donviall.length;i++){
 				data.append('donvinhan[]', donviall[i]);
@@ -391,7 +392,6 @@ export default {
 		},
 		hienTatDonVi(data){
 			var str = '';
-			
 			for(let i = 0; i<data.length; i++){
 				let phancach = '';
 				if(i == data.length-1){phancach = '.';}else{phancach =',';}

@@ -64,3 +64,5 @@ Route::get('/getListNhan','guinhancontroller@listdanhan');
 Route::get('/getListChuaNhan','guinhancontroller@listchuanhan');
 // Ký nhận văn bản
 Route::post('/kynhan', 'guinhancontroller@kynhan');
+// Thực hiện xóa văn bản đã nhận
+Route::get('/delVanBanNhan/{id}', 'guinhanController@delvanbannhan');

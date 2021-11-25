@@ -8,6 +8,7 @@
 						<tr>
 							<th>#</th>
 							<th>Đơn vị gửi</th>
+							<th>Loại văn bản</th>
 							<th>Số văn bản</th>
 							<th>Độ mật</th>
 							<th>Trích yếu</th>
@@ -20,11 +21,34 @@
 						<tr v-for="(list, index) in this.listChuaNhan" :key="list.id" >
 							<td>{{index + 1}}</td>
 							<td>{{list.ky_hieu}}</td>
+							<td>{{list.ten_loai}}</td>
 							<td>{{list.so}}</td>
-							<td>{{list.do_mat}}</td>
+							<td>{{getNameDoMat(list.do_mat)}}</td>
 							<td>{{list.trich_yeu}}</td>
 							<td>{{list.ghi_chu}}</td>
-							<td>{{list.file}}</td>
+							<!--  tính toán để lấy đuôi file và hiện icon -->
+							<td v-if="['doc', 'docx', 'xls', 'xlsx'].includes(catDuoiFile(list.file))">
+								<a style="cursor: pointer;" @click="warning">
+									<img width="25px" src="/guinhanvb/lib/public/images/word-icon.png">
+								</a>
+							</td>
+							<td v-else-if="['pdf'].includes(catDuoiFile(list.file))">
+								<a style="cursor: pointer;" @click="warning">
+									<img width="25px" src="/guinhanvb/lib/public/images/pdf-icon.png">
+								</a>
+							</td>
+							<td v-else-if="['jpg', 'jpeg', 'png'].includes(catDuoiFile(list.file))">
+								<a style="cursor: pointer;" @click="warning">
+									<img width="25px" src="/guinhanvb/lib/public/images/img-icon.png">
+								</a>
+							</td>
+							<td v-else-if="(list.file == '') || (list.file == null) "></td>
+							<td v-else>
+								<a style="cursor: pointer;" @click="warning">
+									<img width="25px" src="/guinhanvb/lib/public/images/blank-file-icon.png">
+								</a>
+							</td>
+							<!-- end -->
 							<td><input type="checkbox" :value="list.id" v-model="vanbannhan"></td>
 						</tr>
 					</tbody>
@@ -54,24 +78,50 @@
 						<tr>
 							<th>#</th>
 							<th>Đơn vị gửi</th>
+							<th>Loại văn bản</th>
 							<th>Số văn bản</th>
 							<th>Độ mật</th>
 							<th>Trích yếu</th>
 							<th>Ghi chú</th>
+							<th>Người nhận</th>
 							<th>File</th>
-							<th><input type="checkbox" @change="checkAll"> All</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr v-for="(list, index) in this.listNhan" :key="list.id" >
 							<td>{{index + 1}}</td>
 							<td>{{list.ky_hieu}}</td>
+							<td>{{list.ten_loai}}</td>
 							<td>{{list.so}}</td>
-							<td>{{list.do_mat}}</td>
+							<td>{{getNameDoMat(list.do_mat)}}</td>
 							<td>{{list.trich_yeu}}</td>
 							<td>{{list.ghi_chu}}</td>
-							<td>{{list.file}}</td>
-							<td><input type="checkbox" :value="list.id" v-model="vanbannhan"></td>
+							<td>{{list.nguoi_nhan}}</td>
+							<!--  tính toán để lấy đuôi file và hiện icon -->
+							<td v-if="['doc', 'docx', 'xls', 'xlsx'].includes(catDuoiFile(list.file))">
+								<a :href="`/guinhanvb/lib/public/vanbangui/${ list.file }`">
+									<img width="25px" src="/guinhanvb/lib/public/images/word-icon.png">
+								</a>
+							</td>
+							<td v-else-if="['pdf'].includes(catDuoiFile(list.file))">
+								<a :href="`/guinhanvb/lib/public/vanbangui/${ list.file }`">
+									<img width="25px" src="/guinhanvb/lib/public/images/pdf-icon.png">
+								</a>
+							</td>
+							<td v-else-if="['jpg', 'jpeg', 'png'].includes(catDuoiFile(list.file))">
+								<a :href="`/guinhanvb/lib/public/vanbangui/${ list.file }`">
+									<img width="25px" src="/guinhanvb/lib/public/images/img-icon.png">
+								</a>
+							</td>
+							<td v-else-if="(list.file == '') || (list.file == null) "></td>
+							<td v-else>
+								<a :href="`/guinhanvb/lib/public/vanbangui/${ list.file }`">
+									<img width="25px" src="/guinhanvb/lib/public/images/blank-file-icon.png">
+								</a>
+							</td>
+							<!-- end -->
+							<td><i class="far fa-trash-alt btn-del" @click="delVanBanNhan(list.id)"></i></td>
 						</tr>
 					</tbody>
 				</table>
@@ -94,7 +144,7 @@ export default {
 	},
 	computed:{
 		vanBanAll(){
-			return this.listNhan.map(function(e){
+			return this.listChuaNhan.map(function(e){
 				return e.id;
 			});
 		},
@@ -118,6 +168,27 @@ export default {
 				this.listVanBanChuaNhan();
 			})
 		},
+		getNameDoMat(domat){
+            switch (domat) {
+                case 1:
+                    return "C";
+                    break;
+                case 2:
+                    return "B";
+                    break;
+                case 3:
+                    return "A";
+                    break;
+                default:
+                    return "-";
+                    break;
+            }
+		},
+		catDuoiFile(filename){
+			let vitri = filename.lastIndexOf('.') + 1;
+			let duoi = filename.slice(vitri);
+			return duoi;
+		},
 		checkAll(){
 			if(this.check == false){
 				this.check = true;
@@ -127,6 +198,9 @@ export default {
 				this.vanbannhan = [];
 			}
 		},
+		warning(){
+			swal('Bạn phải ký nhận mới được phép tải file');
+		},
 		kynhan(){
 			let data = new FormData();
 			data.append('hoten', this.hoten);
@@ -135,9 +209,41 @@ export default {
 				data.append('vanbannhan[]', this.vanbannhan[i]);
 			}
 			axios.post('/guinhanvb/kynhan', data)
-			.then()
+			.then(res=>{
+				swal(
+					'Ký nhận thành công!',
+					{icon: "success",}
+				);
+				this.listVanBanNhan();
+				this.listVanBanChuaNhan();
+			})
 			.catch()
-		}
+		},
+		delVanBanNhan(id){
+			swal({
+				title: "XÓA VĂN BẢN NHẬN ?",
+				text: "Văn bản đã xóa sẽ không thể khôi phục lại !",
+				icon: "warning",
+				buttons: true,
+				dangerMode: true,
+				})
+				.then((willDelete) => {
+				if (willDelete) {
+					axios.get('/guinhanvb/delVanBanNhan/'+id)
+					.then(res=>{
+						swal("Văn bản đã bị xóa!", {
+							icon: "success",
+						});
+						// this.loadList(this.currentPage);
+						this.listVanBanNhan();
+					})
+					.catch()
+					
+				} else {
+					swal("Đã hủy xóa văn bản!");
+				}
+			});
+		},
 	},
 	created(){
 		this.listVanBanNhan();

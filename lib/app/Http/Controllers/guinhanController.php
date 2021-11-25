@@ -70,7 +70,6 @@ class guinhanController extends Controller
         }catch(\Exception $exception){
             DB::rollback();
         }
-        
     }
     // danh sách văn bản gửi
     public function listgui(Request $request){
@@ -84,34 +83,37 @@ class guinhanController extends Controller
     public function delvanban($id){
         vanbangui::destroy($id);
     }
+    // danh sách văn bản chưa nhận
+    public function listchuanhan(Request $request){
+        $data = DB::table('kynhan')
+                ->join('vanbannhan','kynhan.id_van_ban_nhan','=','vanbannhan.id')
+                ->join('donvi','vanbannhan.don_vi_gui','=','donvi.id')
+                ->leftJoin('loaivanban','loaivanban.id','=','vanbannhan.id_loai_van_ban')
+                ->select('kynhan.id','donvi.ky_hieu','vanbannhan.so','loaivanban.ten_loai','vanbannhan.id_loai_van_ban','vanbannhan.do_mat','vanbannhan.trich_yeu','vanbannhan.ghi_chu','vanbannhan.file','vanbannhan.ngay_nhap','vanbannhan.gio_nhap')
+                ->where('kynhan.id_don_vi','=',$request->session()->get('id'))
+                ->where('kynhan.ky_nhan','=',null)
+                ->get();
+        return $data;
+    }
     // danh sách văn bản đã nhận
     public function listdanhan(Request $request){
         $data = DB::table('kynhan')
                 ->join('vanbannhan','kynhan.id_van_ban_nhan','=','vanbannhan.id')
                 ->join('donvi','vanbannhan.don_vi_gui','=','donvi.id')
-                ->select('kynhan.*','donvi.ky_hieu','vanbannhan.*')
+                ->leftJoin('loaivanban','loaivanban.id','=','vanbannhan.id_loai_van_ban')
+                ->select('kynhan.id','kynhan.nguoi_nhan','donvi.ky_hieu','vanbannhan.so','loaivanban.ten_loai','vanbannhan.id_loai_van_ban','vanbannhan.do_mat','vanbannhan.trich_yeu','vanbannhan.ghi_chu','vanbannhan.file','vanbannhan.ngay_nhap','vanbannhan.gio_nhap')
                 ->where('kynhan.id_don_vi','=',$request->session()->get('id'))
                 ->where('kynhan.ky_nhan','=','1')
                 ->where('kynhan.trang_thai','=',null)
                 ->paginate(20);
         return $data;
     }
-    // danh sách văn bản chưa nhận
-    public function listchuanhan(Request $request){
-        $data = DB::table('kynhan')
-                ->join('vanbannhan','kynhan.id_van_ban_nhan','=','vanbannhan.id')
-                ->join('donvi','vanbannhan.don_vi_gui','=','donvi.id')
-                ->select('kynhan.*','donvi.ky_hieu','vanbannhan.*')
-                ->where('kynhan.id_don_vi','=',$request->session()->get('id'))
-                ->where('kynhan.ky_nhan','=',null)
-                ->get();
-        return $data;
-    }
     // Ký nhận văn bản
     public function kynhan(Request $request){
+        $this->validateKyNhan($request);
         foreach($request->vanbannhan as $key => $value){
             DB::table('kynhan')
-            ->where('id', $value)
+            ->where('id',$value)
             ->update([
                 'nguoi_nhan' => $request->hoten,
                 'sdt' => $request->sdt,
@@ -119,7 +121,14 @@ class guinhanController extends Controller
             ]);
         };
     }
-
+    // xóa văn bản nhận
+    public function delvanbannhan($id){
+        DB::table('kynhan')
+            ->where('id',$id)
+            ->update([
+                'trang_thai' =>'1',
+            ]); 
+    }
     public function validateForm(Request $request){
         return $request->validate([
             'trich_yeu' => 'required',
@@ -129,6 +138,23 @@ class guinhanController extends Controller
         ],
         $attributes = [
             'trich_yeu' => 'Trích yếu',
+        ]);
+    }
+    public function validateKyNhan(Request $request){
+        return $request->validate([
+            'hoten' => 'required',
+            'sdt' => 'required|numeric|min:6|max:12',
+
+        ], 
+        $messages = [
+            'required' => ':attribute không được để trống.',
+            'numeric' => ':attribute phải là số điện thoại.',
+            'min' => ':attribute ít hơn số ký tự tối thiểu.',
+            'max' => ':attribute nhiều hơn số ký tự tối đa.',
+        ],
+        $attributes = [
+            'hoten' => 'Họ tên',
+            'sdt' => 'Số điện thoại',
         ]);
     }
 
