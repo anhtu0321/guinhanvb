@@ -125,6 +125,13 @@
 						</tr>
 					</tbody>
 				</table>
+				<!-- phân trang ở dưới -->
+				
+					<ul class="pagination justify-content-end">
+						<li class="page-item" @click.prevent="prev()"><a class="page-link" href="#">Previous</a></li>
+						<li class="page-item" :class="{'active': currentPage==page}" @click.prevent="setPage(page)" v-for="page in pagesNumber" :key="page"><a class="page-link" href="#">{{ page }}</a></li>
+						<li class="page-item" @click.prevent="next()"><a class="page-link" href="#">Next</a></li>
+					</ul>
 			</div>
         </div>
     </div>
@@ -140,6 +147,12 @@ export default {
 			hoten:'',
 			sdt:'',
 			check:false,
+			//data for page
+			last_pages:'',
+			currentPage: 1,
+			offset: 4,
+			from:1,
+			to:1,
 		}
 	},
 	computed:{
@@ -148,15 +161,45 @@ export default {
 				return e.id;
 			});
 		},
+		// xử lý mảng số trang
+		pagesNumber() {
+			if(this.last_pages == null){return [];}
+			if(this.last_pages<=this.offset*2+1){
+				this.from = 1;
+				this.to = this.last_pages;
+			}else{
+				if(this.currentPage <= this.offset){
+					this.from = 1;
+					this.to = 1 + this.offset*2;
+					if(this.to > this.last_pages){
+						this.to = this.last_pages;
+					}
+				}
+				if((this.currentPage> this.offset) && (this.currentPage <= this.last_pages - this.offset)){
+					this.from = this.currentPage - this.offset;
+					this.to = this.currentPage + this.offset;
+				}
+				if(this.currentPage >this.last_pages - this.offset){
+					this.from = this.last_pages - this.offset*2;
+					this.to = this.last_pages;
+				}
+			}
+			var pagesArray = [];
+			for (var i=this.from; i <= this.to; i++) {
+				pagesArray.push(i);
+			}
+			return pagesArray;
+		},
 	},
 	methods:{
-		listVanBanNhan(){
-			axios.get('/guinhanvb/getListNhan')
+		listVanBanNhan(page){
+			axios.get('/guinhanvb/getListNhan?page='+page)
 			.then(res=>{
 				this.listNhan = res.data.data;
+				this.last_pages = res.data.last_page;
 			})
 			.catch(e=>{
-				this.listVanBanNhan();
+				this.listVanBanNhan(page);
 			})
 		},
 		listVanBanChuaNhan(){
@@ -214,7 +257,7 @@ export default {
 					'Ký nhận thành công!',
 					{icon: "success",}
 				);
-				this.listVanBanNhan();
+				this.listVanBanNhan(this.currentPage);
 				this.listVanBanChuaNhan();
 			})
 			.catch()
@@ -244,9 +287,26 @@ export default {
 				}
 			});
 		},
+		// Xử lý khi click vào nút trang
+		setPage(newPage){
+			this.currentPage = newPage;
+			this.listVanBanNhan(this.currentPage);
+		},
+		prev(){
+			if(this.currentPage > 1){
+				this.currentPage--;
+				this.listVanBanNhan(this.currentPage);
+			}
+		},
+		next(){
+			if(this.currentPage < this.last_pages){
+				this.currentPage++;
+				this.listVanBanNhan(this.currentPage);
+			}
+		}
 	},
 	created(){
-		this.listVanBanNhan();
+		this.listVanBanNhan(this.currentPage);
 		this.listVanBanChuaNhan();
 	}
 }

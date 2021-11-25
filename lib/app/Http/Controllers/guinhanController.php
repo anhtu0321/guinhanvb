@@ -92,6 +92,7 @@ class guinhanController extends Controller
                 ->select('kynhan.id','donvi.ky_hieu','vanbannhan.so','loaivanban.ten_loai','vanbannhan.id_loai_van_ban','vanbannhan.do_mat','vanbannhan.trich_yeu','vanbannhan.ghi_chu','vanbannhan.file','vanbannhan.ngay_nhap','vanbannhan.gio_nhap')
                 ->where('kynhan.id_don_vi','=',$request->session()->get('id'))
                 ->where('kynhan.ky_nhan','=',null)
+                ->orderBy('vanbannhan.id','desc')
                 ->get();
         return $data;
     }
@@ -105,7 +106,8 @@ class guinhanController extends Controller
                 ->where('kynhan.id_don_vi','=',$request->session()->get('id'))
                 ->where('kynhan.ky_nhan','=','1')
                 ->where('kynhan.trang_thai','=',null)
-                ->paginate(20);
+                ->orderBy('vanbannhan.id','desc')
+                ->paginate(10);
         return $data;
     }
     // Ký nhận văn bản
@@ -143,7 +145,7 @@ class guinhanController extends Controller
     public function validateKyNhan(Request $request){
         return $request->validate([
             'hoten' => 'required',
-            'sdt' => 'required|numeric|min:6|max:12',
+            'sdt' => 'required|numeric',
 
         ], 
         $messages = [

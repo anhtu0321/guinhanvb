@@ -513,11 +513,7 @@ export default {
 	color:brown;
 	font-weight: bold;
 }
-.pagination{
-	display: flex;
-	justify-content: end;
-	margin-bottom:50px;
-}
+
 .noidungan{
 	display: none;
 	position:absolute;
