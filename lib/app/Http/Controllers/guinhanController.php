@@ -106,7 +106,8 @@ class guinhanController extends Controller
                 ->where('kynhan.id_don_vi','=',$request->session()->get('id'))
                 ->where('kynhan.ky_nhan','=','1')
                 ->where('kynhan.trang_thai','=',null)
-                ->orderBy('vanbannhan.id','desc')
+                ->orderBy('kynhan.ngay_nhan','desc')
+                ->orderBy('kynhan.gio_nhan','desc')
                 ->paginate(10);
         return $data;
     }
@@ -119,7 +120,9 @@ class guinhanController extends Controller
             ->update([
                 'nguoi_nhan' => $request->hoten,
                 'sdt' => $request->sdt,
-                'ky_nhan' => '1'
+                'ky_nhan' => '1',
+                'ngay_nhan'=>date('d/m/Y'),
+                'gio_nhan'=>date('H:i:s'),
             ]);
         };
     }
@@ -145,14 +148,14 @@ class guinhanController extends Controller
     public function validateKyNhan(Request $request){
         return $request->validate([
             'hoten' => 'required',
-            'sdt' => 'required|numeric',
+            'sdt' => 'required|numeric|max:99999999999|min:100000',
 
         ], 
         $messages = [
             'required' => ':attribute không được để trống.',
-            'numeric' => ':attribute phải là số điện thoại.',
-            'min' => ':attribute ít hơn số ký tự tối thiểu.',
-            'max' => ':attribute nhiều hơn số ký tự tối đa.',
+            'numeric' => ':attribute không đúng định dạng.',
+            'min' => ':attribute quá ngắn.',
+            'max' => ':attribute quá dài.',
         ],
         $attributes = [
             'hoten' => 'Họ tên',

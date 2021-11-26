@@ -31,7 +31,7 @@
 						</div>
 						<div class="row mb-3">
 							<div class="col-md-12">
-								<label for="trichyeu" class="form-label col-3">Trích yếu</label>
+								<label for="trichyeu" class="form-label col-3">Trích yếu <span class="thongbao">( * )</span></label>
 								<!-- <input type="text" class="form-control" id="trichyeu" v-model="trichyeu"> -->
 								<input type="text" class="form-control" v-model="trichyeu" :class="{'is-invalid':(errors && errors.trich_yeu)}" @focus="removeErr">
                             	<p class="thongbao" v-if="errors && errors.trich_yeu">{{ errors.trich_yeu[0] }}</p>
@@ -147,7 +147,7 @@
 									<td>{{list.ky_hieu}}</td>
 									<td>{{list.nguoi_nhan}}</td>
 									<td>{{list.sdt}}</td>
-									<td>{{list.ngay_nhan}}{{list.gio_nhan}}</td> 
+									<td>{{list.ngay_nhan}} {{list.gio_nhan}}</td> 
 								</tr>
 							</tbody>
 						</table>

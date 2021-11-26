@@ -58,12 +58,14 @@
 				<form @submit.prevent="kynhan">
 					<div class="row mb-3">
 						<div class="col-md-5">
-							<label for="hoten" class="form-label">Họ tên</label>
-							<input id="hoten" class="form-control" type="text" v-model="hoten">
+							<label for="hoten" class="form-label">Họ tên <span class="thongbao">( * )</span></label>
+							<input id="hoten" class="form-control" type="text" v-model="hoten" :class="{'is-invalid':(errors && errors.hoten)}" @focus="removeErr">
+							<p class="thongbao" v-if="errors && errors.hoten">{{ errors.hoten[0] }}</p>
 						</div>
 						<div class="col-md-5">
-							<label for="sdt" class="form-label">Số điện thoại</label>
-							<input id="sdt" class="form-control" type="text" v-model="sdt">
+							<label for="sdt" class="form-label">Số điện thoại <span class="thongbao">( * )</span></label>
+							<input id="sdt" class="form-control" type="text" v-model="sdt" :class="{'is-invalid':(errors && errors.sdt)}" @focus="removeErr">
+							<p class="thongbao" v-if="errors && errors.sdt">{{ errors.sdt[0] }}</p>
 						</div>
 						<div class="col-md-2">
 							<button class="btn btn-primary mt-4" style="width:100%;" type="submit">Ký nhận</button>
@@ -147,12 +149,16 @@ export default {
 			hoten:'',
 			sdt:'',
 			check:false,
+			// bắt lỗi
+			errors:'',
 			//data for page
 			last_pages:'',
 			currentPage: 1,
 			offset: 4,
 			from:1,
 			to:1,
+			// Tự động load văn bản nhận
+			autoLoad:'',
 		}
 	},
 	computed:{
@@ -211,6 +217,9 @@ export default {
 				this.listVanBanChuaNhan();
 			})
 		},
+		auto(){
+			this.autoLoad = setInterval(this.listVanBanChuaNhan, 30000);
+		},
 		getNameDoMat(domat){
             switch (domat) {
                 case 1:
@@ -260,7 +269,12 @@ export default {
 				this.listVanBanNhan(this.currentPage);
 				this.listVanBanChuaNhan();
 			})
-			.catch()
+			.catch(err=>{
+				this.errors = err.response.data.errors;
+			})
+		},
+		removeErr(){
+            this.errors ='';
 		},
 		delVanBanNhan(id){
 			swal({
@@ -277,7 +291,6 @@ export default {
 						swal("Văn bản đã bị xóa!", {
 							icon: "success",
 						});
-						// this.loadList(this.currentPage);
 						this.listVanBanNhan();
 					})
 					.catch()
@@ -308,6 +321,10 @@ export default {
 	created(){
 		this.listVanBanNhan(this.currentPage);
 		this.listVanBanChuaNhan();
+		this.auto();
+	},
+	beforeDestroy(){
+		clearInterval(this.autoLoad);
 	}
 }
 </script>
